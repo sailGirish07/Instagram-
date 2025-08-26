@@ -1,0 +1,101 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #fff;
+    color: #262626;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main container to center content on wide screens */
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dbdbdb;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.top-nav h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.top-nav a {
+    font-size: 16px;
+    text-decoration: none;
+    color: #0095f6;
+    font-weight: 600;
+}
+
+.top-nav .cancel-link {
+    color: #262626;
+    font-weight: 400;
+}
+
+/* Profile Picture Section */
+.profile-photo-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.profile-photo-section img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 15px;
+}
+
+.profile-photo-section a {
+    color: #0095f6;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* Profile Information Fields */
+.info-fields {
+    width: 100%;
+}
+
+.info-field {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #efefef;
+    padding: 12px 0;
+}
+
+.info-field:last-child {
+    border-bottom: none;
+}
+
+.info-field p {
+    margin: 0;
+    padding-right: 15px;
+}
+
+.info-field .label {
+    width: 100px;
+    font-weight: 600;
+}
+
+.info-field .value {
+    flex: 1;
+    font-weight: 400;
+}
+
+.info-field .placeholder {
+    color: #8e8e8e;
+}

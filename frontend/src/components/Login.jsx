@@ -3,6 +3,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import '../public/styles/login.css'
 
 export function Login() {
   
@@ -49,21 +50,22 @@ export function Login() {
 };
 
   return (
-    <div>
-      <h1>Instagram</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} /><br/><br/>
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange}/><br/><br/>
-        <button type="submit">Log in</button>
-        <p>
-          <a href="/forgot-password">Forgot Password</a>
-        </p>
-      </form>
-      <div>
-        <p>
-           Don't have an account? <a href="/signup">Sign up</a>
-        </p>
-      </div>
-    </div>
-  );
+    <>
+   
+    <div className="login-container">
+            <h1>Instagram</h1>
+            <form onSubmit={handleSubmit}>
+                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} /><br/><br/>
+                <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange}/><br/><br/>
+                <button type="submit">Log in</button>
+                <p><a href="/forgot-password">Forgot Password?</a></p>
+            </form>
+            
+        </div> 
+
+        <div className="signup-container">
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        </div>
+         </>
+          );
 }

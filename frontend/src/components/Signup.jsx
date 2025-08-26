@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../public/styles/signup.css'
 
 export function Signup() {
 
@@ -56,12 +57,7 @@ export function Signup() {
         <input type="text" name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleChange}/><br/><br/>
         <input type="text" name="userName" placeholder="UserName" value={formData.userName} onChange={handleChange}/><br/><br/>
         <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required/>
-        <p >
-          People who use our service may have uploaded your contact information to Instagram.
-        </p>
-        <p >
-          By signing up, you agree to our <a href="#">Terms</a>, <a href="#">Privacy Policy</a> and <a href="#">Cookies Policy</a>.
-        </p>
+        
         <button type="submit">
           Sign up
         </button>

@@ -3,7 +3,10 @@ const connectDb = require('./config/db');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const User = require('./models/user');
+const Post = require('./models/post')
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 
@@ -14,6 +17,22 @@ app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
 }));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+// Multer storage config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // save inside /uploads
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage });
 
 
 const authMiddleware = (req, res, next) => {
@@ -109,6 +128,94 @@ app.get('/profile', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+
+// Update Profile
+app.put('/profile', authMiddleware, async (req, res) => {
+    try {
+        const { fullName, userName, bio, profilePic } = req.body;
+
+        const user = await User.findById(req.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Update fields
+        if (fullName) user.fullName = fullName;
+        if (userName) user.userName = userName;
+        if (bio) user.bio = bio;
+        if (profilePic) user.profilePic = profilePic;
+
+        await user.save();
+
+        res.json({ message: 'Profile updated successfully', user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Create a post
+// app.post('/posts', authMiddleware, async (req, res) => {
+//     try {
+//         const { image, caption } = req.body;
+//         const post = new Post({ image, caption, user: req.userId });
+//         await post.save();
+
+//         // Add post to user's posts array
+//         const user = await User.findById(req.userId);
+//         user.posts.push(post._id);
+//         await user.save();
+
+//         res.json(post);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// });
+
+// 🔹 Create Post (image/video upload)
+app.post('/posts', authMiddleware, upload.single('media'), async (req, res) => {
+  try {
+    const { caption } = req.body;
+
+    // Make sure file exists
+    if (!req.file) {
+      return res.status(400).json({ message: "No media file uploaded" });
+    }
+
+    const filePath = `/uploads/${req.file.filename}`; // local path
+
+    const post = new Post({
+      caption,
+      media: filePath,   // ✅ use "media" instead of "image"
+      user: req.userId
+    });
+
+    await post.save();
+
+    // add post reference to user
+    const user = await User.findById(req.userId);
+    user.posts.push(post._id);
+    await user.save();
+
+    res.json(post);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get all posts of logged-in user
+app.get('/profile-posts', authMiddleware, async (req, res) => {
+  try {
+    // Find posts for the user
+    const posts = await Post.find({ user: req.userId }).sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 // const user = new User({
 //     email : 'pcl@gmail.com',

@@ -1,0 +1,96 @@
+.create-post-container {
+  width: 360px;
+  margin: 50px auto;
+  padding: 25px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(59, 42, 42, 0.15);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-post-container:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(59, 42, 42, 0.2);
+}
+
+.create-post-container h2 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.create-post-form .form-group {
+  margin-bottom: 15px;
+}
+
+.create-post-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.create-post-form input {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+.create-post-form input:focus {
+  border: 1px solid #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.35);
+  transform: scale(1.02);
+  outline: none;
+}
+
+/* Image Preview */
+.image-preview {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.image-preview img:hover {
+  transform: scale(1.05);
+}
+
+/* Button */
+.post-btn {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
+  /* transition: background 0.3s, transform 0.2s, box-shadow 0.3s; */
+}
+
+.post-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 86, 179, 0.3);
+}
+
+.post-btn:active {
+  transform: scale(0.97);
+}
+
+/* Posting animation */
+.post-btn.active {
+  background: #28a745;
+  box-shadow: 0 6px 14px rgba(40, 167, 69, 0.4);
+}

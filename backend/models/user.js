@@ -25,6 +25,33 @@ const userSchema = new mongoose.Schema({
         trim : true,
         unique : true
     },
+    profilePic: {
+        type: String,
+        default: "https://via.placeholder.com/150"
+    },
+    bio: {
+        type: String,
+        maxlength: 200,
+        default: ""
+    },
+    posts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post"   
+        }
+    ],
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
 });
 
 userSchema.pre('save', async function(next) {

@@ -5,8 +5,9 @@ import { Login } from "./components/Login";
 import { Signup } from "./components/Signup";
 import { ForgotPassword } from "./components/ForgotPassword";
 import Home from "./components/Home";
-// import PostForm from "./components/PostForm";
 import Profile from "./components/Profile";
+import EditProfile from "./components/EditProfil";
+import Post from "./components/Post";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home/>}></Route>
         <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/post" element={<Post/>}/>
       </Routes>
     </Router>
   );
