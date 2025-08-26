@@ -118,39 +118,82 @@ app.post('/forgot-pass', async (req, res) => {
 
 
 // Protected Route
-app.get('/profile', authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.userId, '-password'); // Exclude password directly
-        if (!user) return res.status(404).json({ message: 'User not found' });
+// app.get('/profile', authMiddleware, async (req, res) => {
+//     try {
+//         const user = await User.findById(req.userId, '-password'); // Exclude password directly
+//         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        res.json(user);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+//         res.json(user);
+//     } catch (err) {
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// });
+
+app.get('/profile', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId, '-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Make profilePic a full URL
+    const profileUser = user.toObject();
+    if (profileUser.profilePic) {
+      profileUser.profilePic = `http://localhost:8080${profileUser.profilePic}`;
     }
+
+    res.json(profileUser);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
+
 // Update Profile
-app.put('/profile', authMiddleware, async (req, res) => {
-    try {
-        const { fullName, userName, bio, profilePic } = req.body;
+// app.put('/profile', authMiddleware, async (req, res) => {
+//     try {
+//         const { fullName, userName, bio, profilePic } = req.body;
 
-        const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+//         const user = await User.findById(req.userId);
+//         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        // Update fields
-        if (fullName) user.fullName = fullName;
-        if (userName) user.userName = userName;
-        if (bio) user.bio = bio;
-        if (profilePic) user.profilePic = profilePic;
+//         // Update fields
+//         if (fullName) user.fullName = fullName;
+//         if (userName) user.userName = userName;
+//         if (bio) user.bio = bio;
+//         if (profilePic) user.profilePic = profilePic;
 
-        await user.save();
+//         await user.save();
 
-        res.json({ message: 'Profile updated successfully', user });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
-    }
+//         res.json({ message: 'Profile updated successfully', user });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// });
+
+
+// Update Profile with file upload
+app.put('/profile', authMiddleware, upload.single('profilePic'), async (req, res) => {
+  try {
+    const { fullName, userName, bio } = req.body; // text fields
+    const profilePicPath = req.file ? `/uploads/${req.file.filename}` : undefined; // uploaded file
+
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Update fields if provided
+    if (fullName) user.fullName = fullName;
+    if (userName) user.userName = userName;
+    if (bio) user.bio = bio;
+    if (profilePicPath) user.profilePic = profilePicPath;
+
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 // Create a post

@@ -1,101 +1,86 @@
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #fff;
-    color: #262626;
-    margin: 0;
-    padding: 0;
+/* Container */
+.edit-profile-container {
+  width: 400px;
+  margin: 50px auto;
+  padding: 25px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Main container to center content on wide screens */
-.profile-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+/* Profile picture preview */
+.profile-pic-section {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-/* Top Navigation Bar */
-.top-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #dbdbdb;
-    padding-bottom: 15px;
-    margin-bottom: 25px;
+.profile-pic-section img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
 }
 
-.top-nav h1 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    text-align: center;
-    flex-grow: 1;
+/* Form layout */
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.top-nav a {
-    font-size: 16px;
-    text-decoration: none;
-    color: #0095f6;
-    font-weight: 600;
+.edit-profile-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
 }
 
-.top-nav .cancel-link {
-    color: #262626;
-    font-weight: 400;
+/* Text inputs */
+.edit-profile-form input[type="text"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
-/* Profile Picture Section */
-.profile-photo-section {
-    text-align: center;
-    margin-bottom: 25px;
+.edit-profile-form input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0,123,255,0.3);
+  outline: none;
 }
 
-.profile-photo-section img {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #dbdbdb;
-    margin-bottom: 15px;
+/* File input styling */
+.edit-profile-form input[type="file"] {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background 0.3s, border 0.3s;
 }
 
-.profile-photo-section a {
-    color: #0095f6;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 14px;
+.edit-profile-form input[type="file"]:hover {
+  border-color: #007bff;
+  background-color: #f0f8ff;
 }
 
-/* Profile Information Fields */
-.info-fields {
-    width: 100%;
+/* Submit button */
+.edit-profile-form button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
 }
 
-.info-field {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #efefef;
-    padding: 12px 0;
+.edit-profile-form button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(0,123,255,0.3);
 }
 
-.info-field:last-child {
-    border-bottom: none;
-}
-
-.info-field p {
-    margin: 0;
-    padding-right: 15px;
-}
-
-.info-field .label {
-    width: 100px;
-    font-weight: 600;
-}
-
-.info-field .value {
-    flex: 1;
-    font-weight: 400;
-}
-
-.info-field .placeholder {
-    color: #8e8e8e;
+.edit-profile-form button:active {
+  transform: scale(0.97);
 }
