@@ -64,11 +64,6 @@
   height: 24px;
   cursor: pointer;
 }
-
-.heart-icon.liked {
-  filter: none;
-  filter: invert(28%) sepia(97%) saturate(7445%) hue-rotate(358deg) brightness(97%) contrast(120%);
-}
 .post-likes {
   font-weight: bold;
   font-size: 14px;

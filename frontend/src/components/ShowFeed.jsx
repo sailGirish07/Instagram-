@@ -8,15 +8,62 @@ import sendIcon from '../assets/send.png';
 export default function ShowFeed() {
   const [posts, setPosts] = useState([]);
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   fetch("http://localhost:8080/posts", {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => setPosts(data))
+  //     .catch((err) => console.error(err));
+  // }, []);
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch("http://localhost:8080/posts", {
-      headers: { Authorization: `Bearer ${token}` },
+  const token = localStorage.getItem("token");
+  const userId = token ? JSON.parse(atob(token.split('.')[1])).userId : null;
+
+  fetch("http://localhost:8080/posts", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then(res => res.json())
+    .then(data => {
+      const postsWithLiked = data.map(post => ({
+        ...post,
+        liked: userId ? post.likes.includes(userId) : false
+      }));
+      setPosts(postsWithLiked);
     })
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error(err));
-  }, []);
+    .catch(err => console.error(err));
+}, []);
+
+
+
+  const toggleLike = async (postId) => {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(`http://localhost:8080/posts/${postId}/like`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+
+    setPosts(posts.map(post => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            liked: !post.liked,
+            likes: data.likes
+          };
+        }
+        return post;
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return(
     <div className="feed">
@@ -50,7 +97,8 @@ export default function ShowFeed() {
       <img
         src={heartIcon}
         alt="like"
-        className="action-icon heart-icon"
+        className={`action-icon heart-icon ${post.liked ? "liked" : ""}`}
+        onClick={() => toggleLike(post._id)}
       />
       <div className="post-likes">
         <b>{post.likes.length} likes</b>

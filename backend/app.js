@@ -240,6 +240,33 @@ app.get("/posts", authMiddleware, async (req, res) => {
 // });
 
 
+// Like/Unlike a post
+app.put("/posts/:postId/like", authMiddleware, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const userIndex = post.likes.indexOf(req.userId);
+
+    if (userIndex === -1) {
+      // User hasn't liked → add their ID
+      post.likes.push(req.userId);
+    } else {
+      // User already liked → remove their ID
+      post.likes.splice(userIndex, 1);
+    }
+
+    await post.save();
+    res.json({ likes: post.likes.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 const PORT = 8080;
 app.listen(PORT, () => {
