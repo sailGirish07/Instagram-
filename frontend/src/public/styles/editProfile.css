@@ -43,6 +43,12 @@
   border: 1px solid #ccc;
   transition: border 0.3s, box-shadow 0.3s;
 }
+.edit-profile-form textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border 0.3s, box-shadow 0.3s;
+}
 
 .edit-profile-form input[type="text"]:focus {
   border-color: #007bff;
@@ -56,8 +62,9 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   cursor: pointer;
-  transition: background 0.3s, border 0.3s;
+  
 }
+
 
 .edit-profile-form input[type="file"]:hover {
   border-color: #007bff;

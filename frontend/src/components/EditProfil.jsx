@@ -202,6 +202,8 @@ export default function EditProfile() {
   });
 
   const [preview, setPreview] = useState(null);
+  // const [bioExpanded, setBioExpanded] = useState(false);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -291,14 +293,37 @@ export default function EditProfile() {
           placeholder="User Name"
         />
 
-        <label>Bio:</label>
-        <input
+        {/* <label>Bio:</label> */}
+        {/* <input
           type="text"
           name="bio"
           value={formData.bio}
           onChange={handleChange}
           placeholder="Bio"
-        />
+        /> */}
+        {/* <textarea
+  name="bio"
+  value={formData.bio}
+  onChange={handleChange}
+  placeholder="Bio"
+  rows={4} // adjust height
+  style={{ resize: "vertical" }} // allow vertical resizing
+/> */}
+<label>Bio:</label>
+<textarea
+  name="bio"
+  value={formData.bio}
+  onChange={handleChange}
+  placeholder="Bio"
+  rows={6}               // show a bit taller for editing
+  style={{
+    resize: "vertical",
+    whiteSpace: "pre-line", // preserves line breaks as user types
+  }}
+/>
+
+
+
 
         <label>Profile Picture:</label>
         <input

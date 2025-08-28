@@ -1,14 +1,17 @@
-// components/Home.jsx
-import React from "react";
-// import { useNavigate } from "react-router-dom";
 import Dashboard from "./Dashboard";
+import ShowFeed from "./ShowFeed";
 
 export default function Home() {
-//   const navigate = useNavigate();
 
   return (
     <>
     <Dashboard/>
+    <ShowFeed/>
     </>
   );
 }
+
+
+
+
+  

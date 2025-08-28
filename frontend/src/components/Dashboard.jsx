@@ -6,8 +6,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove JWT
-    navigate("/login"); // Navigate to login page
+    localStorage.removeItem("token"); 
+    navigate("/login"); 
   };
 
   return (
@@ -38,7 +38,6 @@ export default function Dashboard() {
         <span>Profile</span>
       </div>
 
-      {/* Logout Button */}
       <div className="logout-link" onClick={handleLogout}>
         <i className="fas fa-sign-out-alt"></i>
         <span>Logout</span>

@@ -8,7 +8,6 @@ export default function Post() {
 
     const navigate = useNavigate();
   const [formData, setFormData] = useState({ caption: "", media: null });
-//   const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,12 +16,6 @@ export default function Post() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, media: file });
-
-    // Show preview
-    // if (file) {
-    //   const url = URL.createObjectURL(file);
-    //   setPreview({ url, type: file.type });
-    // }
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +42,7 @@ export default function Post() {
     //   setPreview(null);
     } catch (err) {
       console.error(err);
-      alert("❌ Error creating post");
+      alert("Error creating post");
     }
   };
 
@@ -61,18 +54,6 @@ export default function Post() {
           <label>Choose Media:</label>
           <input type="file" accept="image/*,video/*" onChange={handleFileChange} required />
         </div>
-
-        {/* Preview Section */}
-        {/* {preview && (
-          <div className="preview-box">
-            {preview.type.startsWith("image/") ? (
-              <img src={preview.url} alt="preview" />
-            ) : (
-              <video src={preview.url} controls />
-            )}
-          </div>
-        )} */}
-
         <div className="form-group">
           <label>Caption:</label>
           <input

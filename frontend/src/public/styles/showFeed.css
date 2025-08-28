@@ -1,0 +1,80 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  width: 100%;
+  max-width: 500px;
+  padding-right: 10px;
+  overflow-y: auto; /* enable vertical scroll */
+  max-height: 90vh;
+ }
+
+.post {
+  width: 400px;
+   height: 500px; 
+  border: 1px solid #dbdbdb;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: white;
+   flex-shrink: 0; 
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.post-media img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.left-actions {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.heart-wrapper{
+  display: inline;
+}
+
+.action-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.heart-icon.liked {
+  filter: none;
+  filter: invert(28%) sepia(97%) saturate(7445%) hue-rotate(358deg) brightness(97%) contrast(120%);
+}
+.post-likes {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 3px;
+}
+
+.heart-icon.liked {
+  filter: invert(28%) sepia(97%) saturate(7445%) hue-rotate(358deg) brightness(97%) contrast(120%);
+}
