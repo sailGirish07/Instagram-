@@ -29,7 +29,9 @@ export default function ShowFeed() {
     .then(data => {
       const postsWithLiked = data.map(post => ({
         ...post,
-        liked: userId ? post.likes.includes(userId) : false
+        liked: userId ? post.likes.includes(userId) : false,
+        likes: post.likes || [] 
+        // likesCount: post.likes.length,
       }));
       setPosts(postsWithLiked);
     })

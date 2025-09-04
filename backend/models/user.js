@@ -61,4 +61,7 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+userSchema.index({ userName: 'text', fullName: 'text' });
+
+
 module.exports = mongoose.model("User", userSchema);

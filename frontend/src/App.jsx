@@ -8,6 +8,9 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import EditProfile from "./components/EditProfil";
 import Post from "./components/Post";
+import UserProfile from "./components/UserProfile";
+// import Messages from "./components/Messages";
+import Chat from "./components/Chat";
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/post" element={<Post/>}/>
+        <Route path="/user/:id" element={<UserProfile/>}/>
+        {/* <Route path="/messages" element={<Messages/>}/> */}
+        <Route path="/chat/:id" element={<Chat/>}/>
       </Routes>
     </Router>
   );

@@ -4,6 +4,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const User = require("./models/user");
 const Post = require("./models/post");
+const Message = require("./models/message");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
@@ -26,7 +27,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Multer storage config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // save inside /uploads
+    cb(null, "uploads/"); 
   },
   filename: function (req, file, cb) {
     const uniqueName = Date.now() + "-" + file.originalname;
@@ -140,8 +141,6 @@ app.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-
-// Update Profile with file upload
 app.put(
   "/profile",
   authMiddleware,
@@ -264,6 +263,90 @@ app.put("/posts/:postId/like", authMiddleware, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
+});
+
+
+// Search users by username or fullname using $text
+app.get("/search", authMiddleware, async (req, res) => {
+  try {
+    const { query } = req.query; // /search?query=pranav
+    if (!query) return res.json([]);
+
+    // Full-text search
+    const users = await User.find({ $text: { $search: query } })
+      .select("userName fullName profilePic");
+
+    // Format profilePic URLs
+    const formatted = users.map(u => ({
+      ...u.toObject(),
+      profilePic: u.profilePic
+        ? `http://localhost:8080${u.profilePic}`
+        : null,
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get any user's profile + posts
+app.get("/user/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id, "-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Make profilePic a full URL
+    const profileUser = user.toObject();
+    if (profileUser.profilePic) {
+      profileUser.profilePic = `http://localhost:8080${profileUser.profilePic}`;
+    }
+
+    // Get posts by this user
+    const posts = await Post.find({ user: id }).sort({ createdAt: -1 });
+
+    res.json({ user: profileUser, posts });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+// Send message to a user
+app.post("/messages/:receiverId", authMiddleware, async (req, res) => {
+  const { receiverId } = req.params;
+  const { text } = req.body;
+  const message = new Message({
+    sender: req.userId,
+    receiver: receiverId,
+    text,
+  });
+  await message.save();
+  const populatedMessage = await message
+    .populate("sender", "userName profilePic")
+    .populate("receiver", "userName profilePic")
+    .execPopulate();
+  res.json(populatedMessage);
+});
+
+// Fetch chat between logged-in user and a specific user
+app.get("/messages/:userId", authMiddleware, async (req, res) => {
+  const { userId } = req.params;
+  const messages = await Message.find({
+    $or: [
+      { sender: req.userId, receiver: userId },
+      { sender: userId, receiver: req.userId }
+    ]
+  })
+  .populate("sender", "userName profilePic")
+  .populate("receiver", "userName profilePic")
+  .sort({ createdAt: 1 }); // oldest → newest
+  res.json(messages);
 });
 
 

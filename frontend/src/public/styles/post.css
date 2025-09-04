@@ -94,3 +94,16 @@
   background: #28a745;
   box-shadow: 0 6px 14px rgba(40, 167, 69, 0.4);
 }
+
+/* Default heart */
+.fa-heart {
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+/* Filled red heart when liked */
+.fa-heart.liked {
+  background-color: red;
+}
