@@ -1,12 +1,35 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../public/styles/dashboared.CSS"
 import SearchBar from './SearchBar';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const[showSearch, setShowSearch] = useState(false);
+  
+  // Update: state for notifications
+  const [unreadCount, setUnreadCount] = useState(0);
+  const token = localStorage.getItem("token");
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/notifications", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const unread = res.data.filter(n => !n.read).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    };
+
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 5000); // poll
+    return () => clearInterval(interval);
+  }, [token]);
+  
   const handleLogout = () => {
     localStorage.removeItem("token"); 
     navigate("/login"); 
@@ -17,40 +40,27 @@ export default function Dashboard() {
       <div className="logo">Instagram</div>
       <nav className="nav-menu">
         <ul>
-          
           <li onClick={() => navigate("/home")}>
             <i className="fas fa-home"></i> Home
           </li>
-          
-             {/* <li> */}
-            {/* <i className="fa-solid fa-magnifying-glass"></i> Search
-            <SearchBar />
-          </li> */}
-           {/* Search icon */}
           <li onClick={() => setShowSearch(!showSearch)}>
             <i className="fa-solid fa-magnifying-glass"></i> Search
           </li>
            {showSearch && <SearchBar />}
-          {/* <li>
-             <i className="far fa-paper-plane"></i>
-            <span>Messages</span>
-          </li> */}
           <li onClick={() => navigate("/messages")}>
-  <i className="far fa-paper-plane"></i>
-  <span>Messages</span>
-</li>
-          <li>
-             <i className="far fa-heart"></i>
+            <i className="far fa-paper-plane"></i>
+            <span>Messages</span>
+            </li>
+            <li onClick={() => navigate("/notification")} className="notification-link">
+            <i className="far fa-heart"></i>
             <span>Notifications</span>
+            {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
           </li>
         </ul>
       </nav>
-
-     
-     <div className="profile-link" onClick={() => navigate("/profile")}>
+      <div className="profile-link" onClick={() => navigate("/profile")}>
         <i className="fas fa-user-circle profile"></i> Profile
       </div>
-
       <div className="logout-link" onClick={handleLogout}>
         <i className="fas fa-sign-out-alt"></i>
         <span>Logout</span>

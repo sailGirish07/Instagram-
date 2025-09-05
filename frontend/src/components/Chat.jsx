@@ -1,96 +1,141 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import '../public/styles/chat.css'; // updated CSS
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import "../public/styles/chat.css";
 
-const Chat = () => {
-  const { userId } = useParams();
+export default function Chat() {
+  const { id: receiverId } = useParams(); // receiver id from route
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const token = localStorage.getItem('token');
-  const userIdLoggedIn = localStorage.getItem('userId'); // current user id
+  const [receiver, setReceiver] = useState(null);
+  const [input, setInput] = useState("");
   const chatBodyRef = useRef(null);
+  const token = localStorage.getItem("token");
 
-  // Fetch messages
+  // Scroll to bottom
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      if (chatBodyRef.current) {
+        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+      }
+    }, 100);
+  };
+
+  // Fetch messages and receiver info
   useEffect(() => {
-    const fetchMessages = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/messages/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMessages(res.data);
+        const messagesRes = await axios.get(
+          `http://localhost:8080/messages/${receiverId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setMessages(messagesRes.data);
 
-        // scroll to bottom
-        setTimeout(() => {
-          chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        }, 100);
+        if (messagesRes.data.length > 0) {
+          const first = messagesRes.data[0];
+          const user =
+            first.sender._id === receiverId ? first.sender : first.receiver;
+          setReceiver(user);
+        } else {
+          const userRes = await axios.get(
+            `http://localhost:8080/user/${receiverId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setReceiver(userRes.data.user);
+        }
+
+        scrollToBottom();
       } catch (err) {
-        console.error("Error fetching messages:", err);
+        console.error("Fetch chat error:", err);
       }
     };
-    fetchMessages();
-  }, [userId, token]);
+
+    fetchData();
+  }, [receiverId, token]);
 
   // Send message
   const handleSend = async () => {
-    if (input.trim() === '') return;
+    if (!input.trim()) return;
+
     try {
       const res = await axios.post(
-        `http://localhost:8080/messages/${userId}`,
+        `http://localhost:8080/messages/${receiverId}`,
         { text: input },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessages([...messages, res.data]);
-      setInput('');
 
-      // scroll to bottom
-      setTimeout(() => {
-        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-      }, 50);
+      setMessages((prev) => [...prev, res.data]);
+      setInput("");
+      scrollToBottom();
     } catch (err) {
-      console.error("Error sending message:", err);
+      console.error("Send message error:", err);
     }
   };
 
-  const otherUser = messages[0]?.sender?._id === userIdLoggedIn ? messages[0]?.receiver : messages[0]?.sender;
-
   return (
     <div className="chat-container">
+      {/* Header */}
       <div className="chat-header">
-        <img
-          src={otherUser?.profilePic || 'https://via.placeholder.com/40'}
-          alt={otherUser?.userName}
-          className="avatar"
-        />
-        <span className="chat-title">{otherUser?.userName || 'Chat'}</span>
+        {receiver ? (
+          <>
+            <img
+              src={receiver.profilePic || "https://via.placeholder.com/40"}
+              alt={receiver.userName}
+              className="avatar"
+            />
+            <span className="chat-title">{receiver.userName}</span>
+          </>
+        ) : (
+          <span className="chat-title">Loading...</span>
+        )}
       </div>
 
+      {/* Messages */}
       <div className="chat-body" ref={chatBodyRef}>
-        {messages.map((msg) => (
-          <div
-            key={msg._id}
-            className={`chat-message ${msg.sender._id === userIdLoggedIn ? 'sent' : 'received'}`}
-          >
-            <div className="message-text">{msg.text}</div>
-            <div className="message-time">
-              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          </div>
-        ))}
+        {messages.length === 0 ? (
+          <div className="empty">Start typing...</div>
+        ) : (
+          messages.map((msg, i) => {
+            const isSent = msg.sender._id !== receiverId; // true if logged-in user sent it
+            const senderImage =
+              msg.sender.profilePic || "https://via.placeholder.com/30";
+
+            return (
+              <div
+                key={i}
+                className={`message-row ${isSent ? "sent" : "received"}`}
+              >
+                {/* Show avatar for both sent and received */}
+                <img
+                  src={senderImage}
+                  alt={msg.sender.userName}
+                  className="message-avatar"
+                />
+                <div className="message">
+                  <p>{msg.text}</p>
+                  <span className="time">
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
+      {/* Input */}
       <div className="chat-input">
         <input
           type="text"
-          placeholder="Message..."
+          placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
         <button onClick={handleSend}>Send</button>
       </div>
     </div>
   );
-};
-
-export default Chat;
+}

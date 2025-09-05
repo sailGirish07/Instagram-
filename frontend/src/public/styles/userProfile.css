@@ -22,22 +22,10 @@
 .profile-info h2 {
   margin: 0;
 }
-
-/* .posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-} */
-
 .post-item img {
   width: 50%;
   height: 50px;
   object-fit: cover;
   border-radius: 5px;
   cursor: pointer;
-  /* transition: transform 0.2s; */
 }
-
-/* .post-item img:hover {
-  transform: scale(1.05);
-} */

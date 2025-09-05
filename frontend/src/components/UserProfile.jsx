@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -30,7 +27,6 @@ export default function UserProfile() {
 
   if (!user) return <p>Loading...</p>;
 
-
   const handleMessageClick = () => {
     navigate(`/chat/${id}`);
   };
@@ -45,31 +41,39 @@ export default function UserProfile() {
             className="profile-img"
           />
           <div className="profile-bio">
-            <p><strong>{user.fullName}</strong></p>
+            <p>
+              <strong>{user.fullName}</strong>
+            </p>
             <p>{user.bio || "Bio"}</p>
 
-              <button
-            onClick={handleMessageClick}
-            style={{
-              marginTop: "10px",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "none",
-              backgroundColor: "#0095f6",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            Message
-          </button>
+            <button
+              onClick={handleMessageClick}
+              style={{
+                marginTop: "10px",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                border: "none",
+                backgroundColor: "#0095f6",
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              Message
+            </button>
           </div>
         </div>
 
         <div className="profile-right">
           <div className="profile-stats">
-            <p><strong>{posts.length}</strong> posts</p>
-            <p><strong>{user.followers?.length || 0}</strong> followers</p>
-            <p><strong>{user.following?.length || 0}</strong> following</p>
+            <p>
+              <strong>{posts.length}</strong> posts
+            </p>
+            <p>
+              <strong>{user.followers?.length || 0}</strong> followers
+            </p>
+            <p>
+              <strong>{user.following?.length || 0}</strong> following
+            </p>
           </div>
         </div>
       </div>

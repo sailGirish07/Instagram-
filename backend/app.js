@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const User = require("./models/user");
 const Post = require("./models/post");
 const Message = require("./models/message");
+const Notification = require('./models/notification');
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
@@ -124,6 +125,7 @@ app.post("/forgot-pass", async (req, res) => {
 });
 
 
+
 app.get("/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.userId, "-password");
@@ -141,11 +143,7 @@ app.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-app.put(
-  "/profile",
-  authMiddleware,
-  upload.single("profilePic"),
-  async (req, res) => {
+app.put("/profile",authMiddleware,upload.single("profilePic"),async (req, res) => {
     try {
       const { fullName, userName, bio } = req.body; // text fields
       const profilePicPath = req.file
@@ -252,6 +250,16 @@ app.put("/posts/:postId/like", authMiddleware, async (req, res) => {
     if (userIndex === -1) {
       // User hasn't liked → add their ID
       post.likes.push(req.userId);
+        if (post.user.toString() !== req.userId) {
+    const senderUser = await User.findById(req.userId);
+    await Notification.create({
+      userId: post.user,             // post owner
+      fromUser: req.userId,          // liker
+      message: `${senderUser.userName} liked your post`,
+      type: "like",
+      relatedId: post._id,
+    });
+  }
     } else {
       // User already liked → remove their ID
       post.likes.splice(userIndex, 1);
@@ -261,6 +269,40 @@ app.put("/posts/:postId/like", authMiddleware, async (req, res) => {
     res.json({ likes: post.likes.length });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.post("/posts/:postId/comment", authMiddleware, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { text } = req.body;
+
+    if (!text.trim()) return res.status(400).json({ message: "Comment cannot be empty" });
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const comment = { user: req.userId, text, createdAt: new Date() };
+    post.comments.push(comment);
+    await post.save();
+
+    // ✅ Create notification if not commenting own post
+    if (post.user.toString() !== req.userId) {
+      const senderUser = await User.findById(req.userId);
+      await Notification.create({
+        userId: post.user,
+        fromUser: req.userId,
+        message: `${senderUser.userName} commented on your post`,
+        type: "comment",
+        relatedId: post._id,
+      });
+    }
+
+    res.json(comment);
+  } catch (err) {
+    console.error("Comment error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -316,39 +358,145 @@ app.get("/user/:id", authMiddleware, async (req, res) => {
 });
 
 
-
 // Send message to a user
 app.post("/messages/:receiverId", authMiddleware, async (req, res) => {
-  const { receiverId } = req.params;
-  const { text } = req.body;
-  const message = new Message({
-    sender: req.userId,
-    receiver: receiverId,
-    text,
-  });
-  await message.save();
-  const populatedMessage = await message
-    .populate("sender", "userName profilePic")
-    .populate("receiver", "userName profilePic")
-    .execPopulate();
-  res.json(populatedMessage);
+  try {
+    const { receiverId } = req.params;
+    const { text } = req.body;
+
+    if (!text || !text.trim()) {
+      return res.status(400).json({ message: "Message cannot be empty" });
+    }
+
+    const receiverUser = await User.findById(receiverId);
+    if (!receiverUser) return res.status(404).json({ message: "Receiver not found" });
+
+    // ✅ Fix: fetch sender user
+    const senderUser = await User.findById(req.userId);
+
+    const message = new Message({
+      sender: req.userId,
+      receiver: receiverId,
+      text,
+    });
+    await message.save();
+
+    // ✅ Fix: Notification with senderUser
+    await Notification.create({
+      userId: receiverId,
+      fromUser: req.userId,
+      message: `${senderUser.userName} sent you a message`,
+      type: "message",
+      relatedId: message._id,
+      read: false,
+    });
+
+    await message.populate([
+      { path: "sender", select: "userName profilePic" },
+      { path: "receiver", select: "userName profilePic" },
+    ]);
+
+    res.json(message);
+  } catch (err) {
+    console.error("Send message error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 });
 
-// Fetch chat between logged-in user and a specific user
+
+// ✅ Conversations route first
+app.get("/messages/conversations", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const messages = await Message.find({
+      $or: [{ sender: userId }, { receiver: userId }],
+    })
+      .populate("sender", "userName profilePic")
+      .populate("receiver", "userName profilePic")
+      .sort({ createdAt: -1 });
+
+    const convMap = {};
+
+    messages.forEach(msg => {
+      if (!msg.sender || !msg.receiver) return; // skip if any user is missing
+
+      const otherId = msg.sender._id.toString() === userId ? msg.receiver._id.toString() : msg.sender._id.toString();
+      if (!convMap[otherId]) {
+        convMap[otherId] = {
+          participants: [msg.sender, msg.receiver],
+          lastMessage: msg,
+          loggedInUser: userId
+        };
+      }
+    });
+
+    res.json(Object.values(convMap));
+  } catch (err) {
+    console.error("Conversations error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+// ✅ Specific chat route after
 app.get("/messages/:userId", authMiddleware, async (req, res) => {
-  const { userId } = req.params;
-  const messages = await Message.find({
-    $or: [
-      { sender: req.userId, receiver: userId },
-      { sender: userId, receiver: req.userId }
-    ]
-  })
-  .populate("sender", "userName profilePic")
-  .populate("receiver", "userName profilePic")
-  .sort({ createdAt: 1 }); // oldest → newest
-  res.json(messages);
+  try {
+    const { userId } = req.params;
+    const messages = await Message.find({
+      $or: [
+        { sender: req.userId, receiver: userId },
+        { sender: userId, receiver: req.userId },
+      ],
+    })
+      .populate("sender", "userName profilePic")
+      .populate("receiver", "userName profilePic")
+      .sort({ createdAt: 1 });
+    res.json(messages);
+  } catch (err) {
+    console.error("Fetch chat error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
+
+// Fetch notifications
+app.get("/notifications", authMiddleware, async (req, res) => {
+  try {
+    const notifications = await Notification.find({ userId: req.userId })
+      .sort({ createdAt: -1 })
+      .populate("fromUser", "userName profilePic");
+
+    res.json(notifications);
+  } catch (err) {
+    console.error("Fetch notifications error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Mark notification as read
+app.put("/notifications/:id/read", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Notification.findByIdAndUpdate(id, { read: true });
+    res.json({ message: "Notification marked as read" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Mark all notifications as read
+app.put("/notifications/mark-all-read", authMiddleware, async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { userId: req.userId, read: false },
+      { $set: { read: true } }
+    );
+    res.json({ message: "All notifications marked as read" });
+  } catch (err) {
+    console.error("Mark all read error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 const PORT = 8080;

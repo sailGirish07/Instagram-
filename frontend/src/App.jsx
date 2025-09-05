@@ -9,8 +9,9 @@ import Profile from "./components/Profile";
 import EditProfile from "./components/EditProfil";
 import Post from "./components/Post";
 import UserProfile from "./components/UserProfile";
-// import Messages from "./components/Messages";
+import Messages from "./components/Messages";
 import Chat from "./components/Chat";
+import Notification from "./components/Notification";
 
 function App() {
   return (
@@ -25,8 +26,9 @@ function App() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/post" element={<Post/>}/>
         <Route path="/user/:id" element={<UserProfile/>}/>
-        {/* <Route path="/messages" element={<Messages/>}/> */}
+        <Route path="/messages" element={<Messages/>}/>
         <Route path="/chat/:id" element={<Chat/>}/>
+        <Route path="/notification" element={<Notification/>}/>
       </Routes>
     </Router>
   );

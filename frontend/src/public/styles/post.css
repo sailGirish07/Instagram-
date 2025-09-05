@@ -76,7 +76,6 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
-  /* transition: background 0.3s, transform 0.2s, box-shadow 0.3s; */
 }
 
 .post-btn:hover {

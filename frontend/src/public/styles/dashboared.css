@@ -89,3 +89,17 @@
   font-size: 18px;
 }
 
+.notification-link {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  margin-left: 75%;
+  background: rgb(215, 48, 48);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
