@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+// const location = useLocation();
 import SearchBar from "./SearchBar";
 import "../public/styles/messages.css";
 
 export default function Messages() {
   const [conversations, setConversations] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("token");
+
+  const sharedPostId = location.state?.sharePost; 
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -24,6 +28,23 @@ export default function Messages() {
     fetchConversations();
   }, [token]);
 
+
+   // ✅ Send shared post when chat clicked
+  const handleChatClick = async (otherUserId) => {
+    if (sharedPostId) {
+      try {
+        await axios.post(
+          `http://localhost:8080/messages/${otherUserId}`,
+          { post: sharedPostId}, // sending post as message
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Failed to share post:", err);
+      }
+    }
+
+    navigate(`/chat/${otherUserId}`); // navigate to chat
+  };
   return (
     <div className="messages-container">
       <SearchBar />
@@ -42,7 +63,7 @@ export default function Messages() {
             return (
               <div
                 key={otherUser._id}
-                onClick={() => navigate(`/chat/${otherUser._id}`)}
+                onClick={() => handleChatClick(otherUser._id)}
                 className="conversation-item"
               >
                 <img

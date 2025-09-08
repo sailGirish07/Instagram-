@@ -20,10 +20,10 @@ export default function SearchBar() {
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:8080/search?query=${value}`,
+       const res = await axios.get(
+        `http://localhost:8080/users/search?query=${value}`,
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+       );
       setResults(res.data);
     } catch (err) {
       console.error("Search failed:", err);

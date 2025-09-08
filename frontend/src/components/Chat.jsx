@@ -110,7 +110,7 @@ export default function Chat() {
                   alt={msg.sender.userName}
                   className="message-avatar"
                 />
-                <div className="message">
+                {/* <div className="message">
                   <p>{msg.text}</p>
                   <span className="time">
                     {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -118,7 +118,18 @@ export default function Chat() {
                       minute: "2-digit",
                     })}
                   </span>
-                </div>
+                </div> */}
+               <div className="message">
+  {msg.post ? (
+    <img
+      src={msg.post.startsWith("http") ? msg.post : `http://localhost:8080${msg.post}`}
+      alt="shared-post"
+      className="shared-post"
+    />
+  ) : (
+    <p>{msg.text}</p>
+  )}
+</div>
               </div>
             );
           })
@@ -139,3 +150,4 @@ export default function Chat() {
     </div>
   );
 }
+

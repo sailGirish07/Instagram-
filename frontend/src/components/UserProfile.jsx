@@ -13,7 +13,7 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/user/${id}`, {
+        const res = await axios.get(`http://localhost:8080/users/user/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data.user);
