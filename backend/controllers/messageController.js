@@ -6,9 +6,9 @@ const Notification = require("../models/notification");
 exports.sendMessage = async (req, res) => {
   try {
     const { receiverId } = req.params;
-    const { text } = req.body;
+    const { text, post  } = req.body;
 
-    if (!text || !text.trim()) {
+    if ((!text || !text.trim()) && !post) {
       return res.status(400).json({ message: "Message cannot be empty" });
     }
 
@@ -22,8 +22,19 @@ exports.sendMessage = async (req, res) => {
       sender: req.userId,
       receiver: receiverId,
       text,
+      post
     });
     await message.save();
+  //   message = await message.populate("post", "imageUrl title"); //important
+  //  res.json(message);
+  
+  await message.populate([
+      { path: "sender", select: "userName profilePic" },
+      { path: "receiver", select: "userName profilePic" },
+      {path: "post", select: "imageUrl title"}
+    ]);
+
+     res.json(message);
 
     await Notification.create({
       userId: receiverId,
@@ -34,12 +45,13 @@ exports.sendMessage = async (req, res) => {
       read: false,
     });
 
-    await message.populate([
-      { path: "sender", select: "userName profilePic" },
-      { path: "receiver", select: "userName profilePic" },
-    ]);
+    // await message.populate([
+    //   { path: "sender", select: "userName profilePic" },
+    //   { path: "receiver", select: "userName profilePic" },
+    //   {path: "post", select: "imageUrl title"}
+    // ]);
 
-    res.json(message);
+   
   } catch (err) {
     console.error("Send message error:", err);
     res.status(500).json({ message: "Server error" });
@@ -56,6 +68,7 @@ exports.getConversations = async (req, res) => {
     })
       .populate("sender", "userName profilePic")
       .populate("receiver", "userName profilePic")
+      .populate("post", "imageUrl title")
       .sort({ createdAt: -1 });
 
     const convMap = {};
@@ -96,6 +109,7 @@ exports.getChat = async (req, res) => {
     })
       .populate("sender", "userName profilePic")
       .populate("receiver", "userName profilePic")
+      .populate("post", "media caption")
       .sort({ createdAt: 1 });
 
     res.json(messages);

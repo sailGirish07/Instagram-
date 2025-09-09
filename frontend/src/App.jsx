@@ -12,6 +12,7 @@ import UserProfile from "./components/UserProfile";
 import Messages from "./components/Messages";
 import Chat from "./components/Chat";
 import Notification from "./components/Notification";
+import Comments from "./components/Comments";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/messages" element={<Messages/>}/>
         <Route path="/chat/:id" element={<Chat/>}/>
         <Route path="/notification" element={<Notification/>}/>
+        <Route path="/comments/:postId" element={<Comments/>}/>
       </Routes>
     </Router>
   );

@@ -51,7 +51,7 @@
 
 .left-actions {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   align-items: flex-start;
 }
 
@@ -62,7 +62,9 @@
 .action-icon {
   width: 24px;
   height: 24px;
+  /* font-size: 22px; */
   cursor: pointer;
+  color: #262626; 
 }
 .post-likes {
   font-weight: bold;
@@ -70,6 +72,64 @@
   margin-top: 3px;
 }
 
+.fa-solid.fa-heart.liked {
+  color: #ed4956; /* Instagram red for filled heart */
+}
+/* Base heart icon */
+.heart-icon {
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: #262626;
+}
+
+/* Liked state: Instagram red */
 .heart-icon.liked {
-  filter: invert(28%) sepia(97%) saturate(7445%) hue-rotate(358deg) brightness(97%) contrast(120%);
+  color: #ed4956;
+}
+
+/* Pop animation on like */
+.animate-like {
+  animation: heart-pop 0.3s ease;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Optional: Hover effect for tactile feedback */
+.heart-icon:hover {
+  transform: scale(1.2);
+}
+
+
+/* Heart image styling */
+.heart-img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Pop animation */
+.animate-like {
+  animation: heart-pop 0.3s ease;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

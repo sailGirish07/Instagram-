@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-// const location = useLocation();
 import SearchBar from "./SearchBar";
 import "../public/styles/messages.css";
 
@@ -29,7 +28,7 @@ export default function Messages() {
   }, [token]);
 
 
-   // ✅ Send shared post when chat clicked
+   //  Send shared post when chat clicked
   const handleChatClick = async (otherUserId) => {
     if (sharedPostId) {
       try {
