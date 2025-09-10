@@ -23,8 +23,10 @@ export function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const res = await axios.post("http://localhost:8080/signup", formData);
-      const res = await axios.post("http://localhost:8080/auth/signup", formData);
+      const res = await axios.post(
+        "http://localhost:8080/auth/signup",
+        formData
+      );
       alert(res.data.message);
       setFormData({
         email: "",
@@ -41,7 +43,6 @@ export function Signup() {
       alert(err.response?.data?.error || "Signup failed");
     }
     console.log("Form Submitted!", formData);
-    // alert('Form submitted! Check the console for the form data.');
   };
 
   return (

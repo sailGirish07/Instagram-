@@ -16,9 +16,6 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { fullName, userName, bio } = req.body;
-    // const profilePicPath = req.file ? `/uploads/${req.file.filename}` : undefined;
-
-     // ✅ Use full URL if file is uploaded
     const profilePicPath = req.file
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       : undefined;
@@ -48,7 +45,7 @@ exports.getUserPosts = async (req, res) => {
   }
 };
 
-// 🔥 Get public profile by ID
+//Get public profile by ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id, "-password")
@@ -57,14 +54,16 @@ exports.getUserById = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const posts = await Post.find({ user: req.params.id }).sort({ createdAt: -1 });
+    const posts = await Post.find({ user: req.params.id }).sort({
+      createdAt: -1,
+    });
     res.json({ user, posts });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// 🔥 Search users
+// Search users
 exports.searchUsers = async (req, res) => {
   try {
     const query = req.query.query;
@@ -73,8 +72,8 @@ exports.searchUsers = async (req, res) => {
     const users = await User.find({
       $or: [
         { userName: { $regex: query, $options: "i" } },
-        { fullName: { $regex: query, $options: "i" } }
-      ]
+        { fullName: { $regex: query, $options: "i" } },
+      ],
     }).select("userName fullName profilePic");
 
     res.json(users);
@@ -82,4 +81,3 @@ exports.searchUsers = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-

@@ -6,39 +6,36 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
   useEffect(() => {
-  const fetchNotifications = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotifications(res.data);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    }
-  };
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/notifications", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setNotifications(res.data);
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    };
 
-  const markAllAsRead = async () => {
-    try {
-      await axios.put(
-        "http://localhost:8080/notifications/mark-all-read",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } catch (err) {
-      console.error("Error marking all as read:", err);
-    }
-  };
+    const markAllAsRead = async () => {
+      try {
+        await axios.put(
+          "http://localhost:8080/notifications/mark-all-read",
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Error marking all as read:", err);
+      }
+    };
+    fetchNotifications();
+    markAllAsRead();
 
-  // Fetch and mark as read when Notifications page loads
-  fetchNotifications();
-  markAllAsRead();
+    const interval = setInterval(fetchNotifications, 5000);
+    return () => clearInterval(interval);
+  }, [token]);
 
-  const interval = setInterval(fetchNotifications, 5000);
-  return () => clearInterval(interval);
-}, [token]);
-
-//Update: unread count
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="notifications-container">

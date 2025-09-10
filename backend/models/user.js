@@ -1,73 +1,76 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
-    email : {
-        type : String,
-        required : true,
-        unique : true,
-        lowercase : true,
-        trim : true
-    },
-    password : {
-        type: String,
-        required: true
-    },
-    fullName : {
-        type : String,
-        required : true,
-        trim : true
-    },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  fullName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 
-    userName : {
-        type : String,
-        required : true,
-        trim : true,
-        unique : true
+  userName: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true,
+  },
+  profilePic: {
+    type: String,
+    default: "https://via.placeholder.com/150",
+  },
+  bio: {
+    type: String,
+    maxlength: 200,
+    default: "",
+  },
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
     },
-    profilePic: {
-        type: String,
-        default: "https://via.placeholder.com/150"
+  ],
+  savedPosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
     },
-    bio: {
-        type: String,
-        maxlength: 200,
-        default: ""
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    posts: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Post"   
-        }
-    ],
-    followers: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
-    following: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
-userSchema.pre('save', async function(next) {
-    if(!this.isModified('password'))
-        return next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
-
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.index({ userName: 'text', fullName: 'text' });
-
+userSchema.index({ userName: "text", fullName: "text" });
 
 module.exports = mongoose.model("User", userSchema);

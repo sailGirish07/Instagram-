@@ -10,7 +10,7 @@ export default function Messages() {
   const location = useLocation();
   const token = localStorage.getItem("token");
 
-  const sharedPostId = location.state?.sharePost; 
+  const sharedPostId = location.state?.sharePost;
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -27,14 +27,13 @@ export default function Messages() {
     fetchConversations();
   }, [token]);
 
-
-   //  Send shared post when chat clicked
+  //  Send shared post when chat clicked
   const handleChatClick = async (otherUserId) => {
     if (sharedPostId) {
       try {
         await axios.post(
           `http://localhost:8080/messages/${otherUserId}`,
-          { post: sharedPostId}, // sending post as message
+          { post: sharedPostId }, // sending post as message
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch (err) {

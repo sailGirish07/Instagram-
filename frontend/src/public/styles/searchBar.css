@@ -32,7 +32,6 @@
   align-items: center;
   cursor: pointer;
   border-bottom: 1px solid #eee;
-  transition: background 0.2s ease;
 }
 
 .searchbar-item:hover {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import "../public/styles/profile.css"; // reuse the same CSS as Profile.js
+import "../public/styles/profile.css";
 
 export default function UserProfile() {
   const { id } = useParams();

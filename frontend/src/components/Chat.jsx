@@ -30,10 +30,6 @@ export default function Chat() {
         );
         setMessages(messagesRes.data);
 
-
-        // console.log("Messages data:", messagesRes.data);
-
-
         if (messagesRes.data.length > 0) {
           const first = messagesRes.data[0];
           const user =
@@ -75,14 +71,13 @@ export default function Chat() {
     }
   };
 
-   const formatTime = (timestamp) => {
+  const formatTime = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   return (
     <div className="chat-container">
-      {/* Header */}
       <div className="chat-header">
         {receiver ? (
           <>
@@ -119,43 +114,29 @@ export default function Chat() {
                   alt={msg.sender.userName}
                   className="message-avatar"
                 />
-               <div className="message" key={msg._id}>
-                {/* {msg.post && msg.post.imageUrl ? (
-                  <div className="shared-post">
-                <img src={msg.post.imageUrl.startsWith("http") ? 
-                  msg.post.imageUrl 
-                  : `http://localhost:8080${msg.post.imageUrl}`
-                }
-                alt="shared-post"
-                
-                
-                />
-                {msg.post.title && <p>{msg.post.title}</p>}
+                <div className="message" key={msg._id}>
+                  {msg.post ? (
+                    <div className="shared-post">
+                      <img
+                        src={
+                          msg.post.media
+                            ? msg.post.media.startsWith("http")
+                              ? msg.post.media
+                              : `http://localhost:8080${msg.post.media}`
+                            : "https://via.placeholder.com/150"
+                        }
+                        alt={msg.post.caption || "shared post"}
+                        className="shared-post-img"
+                      />
+                      {msg.post.caption && (
+                        <p className="shared-post-title">{msg.post.caption}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p>{msg.text}</p>
+                  )}
+                  <span className="time">{formatTime(msg.createdAt)}</span>
                 </div>
-              ) : (
-                
-              <p>{msg.text}</p>
-              )} */}
-              {msg.post ? (
-  <div className="shared-post">
-    <img
-      src={
-        msg.post.media
-          ? msg.post.media.startsWith("http")
-            ? msg.post.media
-            : `http://localhost:8080${msg.post.media}`
-          : "https://via.placeholder.com/150"
-      }
-      alt={msg.post.caption || "shared post"}
-      className="shared-post-img"
-    />
-    {msg.post.caption && <p className="shared-post-title">{msg.post.caption}</p>}
-  </div>
-) : (
-  <p>{msg.text}</p>
-)}
-               <span className="time">{formatTime(msg.createdAt)}</span>
-              </div>
               </div>
             );
           })
@@ -176,4 +157,3 @@ export default function Chat() {
     </div>
   );
 }
-

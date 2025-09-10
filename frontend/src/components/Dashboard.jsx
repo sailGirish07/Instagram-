@@ -1,14 +1,12 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../public/styles/dashboared.CSS"
-import SearchBar from './SearchBar';
+import "../public/styles/dashboared.CSS";
+import SearchBar from "./SearchBar";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const[showSearch, setShowSearch] = useState(false);
-  
-  // Update: state for notifications
+  const [showSearch, setShowSearch] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const token = localStorage.getItem("token");
 
@@ -18,7 +16,7 @@ export default function Dashboard() {
         const res = await axios.get("http://localhost:8080/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const unread = res.data.filter(n => !n.read).length;
+        const unread = res.data.filter((n) => !n.read).length;
         setUnreadCount(unread);
       } catch (err) {
         console.error("Error fetching notifications:", err);
@@ -26,14 +24,9 @@ export default function Dashboard() {
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 5000); // poll
+    const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
   }, [token]);
-  
-  const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    navigate("/login"); 
-  };
 
   return (
     <div className="sidebar">
@@ -46,12 +39,15 @@ export default function Dashboard() {
           <li onClick={() => setShowSearch(!showSearch)}>
             <i className="fa-solid fa-magnifying-glass"></i> Search
           </li>
-           {showSearch && <SearchBar />}
+          {showSearch && <SearchBar />}
           <li onClick={() => navigate("/messages")}>
             <i className="far fa-paper-plane"></i>
             <span>Messages</span>
-            </li>
-            <li onClick={() => navigate("/notification")} className="notification-link">
+          </li>
+          <li
+            onClick={() => navigate("/notification")}
+            className="notification-link"
+          >
             <i className="far fa-heart"></i>
             <span>Notifications</span>
             {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
@@ -61,11 +57,6 @@ export default function Dashboard() {
       <div className="profile-link" onClick={() => navigate("/profile")}>
         <i className="fas fa-user-circle profile"></i> Profile
       </div>
-      <div className="logout-link" onClick={handleLogout}>
-        <i className="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </div>
     </div>
   );
 }
-

@@ -6,50 +6,63 @@ import saveIcon from "../assets/bookmark.png";
 import sendIcon from "../assets/send.png";
 import heartIcon from "../assets/heart.png";
 import like from "../assets/like.png";
+import imgSave from "../assets/imgSaved.png";
 
 export default function ShowFeed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
-  // const [openComments, setOpenComments] = useState(null);
-  // const [newComment, setNewComment] = useState("");
 
+  // Fetch posts + saved posts together
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = token ? JSON.parse(atob(token.split(".")[1])).userId : null;
 
-    fetch("http://localhost:8080/posts", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const postsWithLiked = data.map((post) => {
-          let profilePic = "/default-avatar.png";
-          if (post.user?.profilePic) {
-            profilePic = post.user.profilePic.startsWith("http")
-              ? post.user.profilePic
-              : `http://localhost:8080${post.user.profilePic}`;
-          }
+    const fetchPosts = async () => {
+      try {
+        // Fetch posts and saved posts simultaneously
+        const [postsRes, savedRes] = await Promise.all([
+          fetch("http://localhost:8080/posts", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:8080/posts/saved", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-          let media = post.media;
-          if (media && !media.startsWith("http")) {
-            media = `http://localhost:8080${media}`;
-          }
+        const postsData = await postsRes.json();
+        const savedPosts = await savedRes.json();
+        const savedIds = savedPosts.map((p) => p._id);
 
-          return {
-            ...post,
-            liked: userId ? post.likes.includes(userId) : false,
-            likes: post.likes.length,
-            user: { ...post.user, profilePic },
-            media,
-            animate: false, // animation flag
-          };
-        });
+        // Merge post state with saved & liked info
+        const postsWithState = postsData.map((post) => ({
+          ...post,
+          liked: userId ? post.likes.includes(userId) : false,
+          likes: post.likes.length,
+          saved: savedIds.includes(post._id), // ✅ mark saved properly
+          animate: false,
+          user: {
+            ...post.user,
+            profilePic: post.user?.profilePic
+              ? post.user.profilePic.startsWith("http")
+                ? post.user.profilePic
+                : `http://localhost:8080${post.user.profilePic}`
+              : "/default-avatar.png",
+          },
+          media: post.media?.startsWith("http")
+            ? post.media
+            : `http://localhost:8080${post.media}`,
+        }));
 
-        setPosts(postsWithLiked);
-      })
-      .catch((err) => console.error(err));
+        setPosts(postsWithState);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+      }
+    };
+
+    fetchPosts();
   }, []);
 
+  //Like toggle
   const toggleLike = async (postId) => {
     const token = localStorage.getItem("token");
 
@@ -62,7 +75,7 @@ export default function ShowFeed() {
             ...post,
             liked,
             likes: liked ? post.likes + 1 : post.likes - 1,
-            animate: liked, // only animate on like
+            animate: liked,
           };
         }
         return post;
@@ -79,21 +92,40 @@ export default function ShowFeed() {
       });
       const data = await res.json();
 
-      // Sync likes count from server
+      // Sync likes with server
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post._id === postId ? { ...post, likes: data.likes } : post
         )
       );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-      // Remove animation after 300ms
-      setTimeout(() => {
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post._id === postId ? { ...post, animate: false } : post
-          )
-        );
-      }, 300);
+  //Save toggle
+  const toggleSave = async (postId) => {
+    const token = localStorage.getItem("token");
+
+    setPosts((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, saved: !post.saved } : post
+      )
+    );
+
+    try {
+      const res = await fetch(`http://localhost:8080/posts/${postId}/save`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      // Sync with server
+      setPosts((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, saved: data.saved } : post
+        )
+      );
     } catch (err) {
       console.error(err);
     }
@@ -134,16 +166,14 @@ export default function ShowFeed() {
                   <b>{post.likes} likes</b>
                 </div>
               </div>
-
               <img
                 src={chatIcon}
                 alt="comment"
                 className="action-icon"
                 onClick={() =>
-                 navigate(`/comments/${post._id}`, {state : {post}})
+                  navigate(`/comments/${post._id}`, { state: { post } })
                 }
               />
-
               <img
                 src={sendIcon}
                 alt="share"
@@ -153,8 +183,14 @@ export default function ShowFeed() {
                 }
               />
             </div>
+
             <div className="right-actions">
-              <img src={saveIcon} alt="save" className="action-icon" />
+              <img
+                src={post.saved ? imgSave : saveIcon}
+                alt="save"
+                className="action-icon"
+                onClick={() => toggleSave(post._id)}
+              />
             </div>
           </div>
         </div>

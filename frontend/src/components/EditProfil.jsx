@@ -34,7 +34,6 @@ export default function EditProfile() {
         alert("Failed to fetch profile");
       }
     };
-
     fetchProfile();
   }, [token]);
 
@@ -122,6 +121,3 @@ export default function EditProfile() {
     </div>
   );
 }
-
-
-

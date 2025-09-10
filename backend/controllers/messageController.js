@@ -6,7 +6,7 @@ const Notification = require("../models/notification");
 exports.sendMessage = async (req, res) => {
   try {
     const { receiverId } = req.params;
-    const { text, post  } = req.body;
+    const { text, post } = req.body;
 
     if ((!text || !text.trim()) && !post) {
       return res.status(400).json({ message: "Message cannot be empty" });
@@ -22,19 +22,17 @@ exports.sendMessage = async (req, res) => {
       sender: req.userId,
       receiver: receiverId,
       text,
-      post
+      post,
     });
     await message.save();
-  //   message = await message.populate("post", "imageUrl title"); //important
-  //  res.json(message);
-  
-  await message.populate([
+
+    await message.populate([
       { path: "sender", select: "userName profilePic" },
       { path: "receiver", select: "userName profilePic" },
-      {path: "post", select: "imageUrl title"}
+      { path: "post", select: "imageUrl title" },
     ]);
 
-     res.json(message);
+    res.json(message);
 
     await Notification.create({
       userId: receiverId,
@@ -44,14 +42,6 @@ exports.sendMessage = async (req, res) => {
       relatedId: message._id,
       read: false,
     });
-
-    // await message.populate([
-    //   { path: "sender", select: "userName profilePic" },
-    //   { path: "receiver", select: "userName profilePic" },
-    //   {path: "post", select: "imageUrl title"}
-    // ]);
-
-   
   } catch (err) {
     console.error("Send message error:", err);
     res.status(500).json({ message: "Server error" });

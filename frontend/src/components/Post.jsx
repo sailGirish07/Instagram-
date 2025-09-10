@@ -25,7 +25,7 @@ export default function CreatePost() {
         },
       });
 
-      navigate("/profile"); // redirect to profile after posting
+      navigate("/profile");
     } catch (err) {
       console.error("Error creating post:", err);
       alert("Failed to create post");

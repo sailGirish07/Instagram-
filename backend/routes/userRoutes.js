@@ -21,5 +21,4 @@ router.get("/profile-posts", auth, getUserPosts);
 router.get("/user/:id", auth, getUserById);
 router.get("/search", auth, searchUsers);
 
-
 module.exports = router;

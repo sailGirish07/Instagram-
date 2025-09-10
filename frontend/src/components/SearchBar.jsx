@@ -18,12 +18,11 @@ export default function SearchBar() {
       setResults([]);
       return;
     }
-
     try {
-       const res = await axios.get(
+      const res = await axios.get(
         `http://localhost:8080/users/search?query=${value}`,
         { headers: { Authorization: `Bearer ${token}` } }
-       );
+      );
       setResults(res.data);
     } catch (err) {
       console.error("Search failed:", err);
@@ -55,7 +54,6 @@ export default function SearchBar() {
         onChange={handleSearch}
         className="searchbar-input"
       />
-
       {results.length > 0 && (
         <div className="searchbar-dropdown">
           {results.map((user) => (

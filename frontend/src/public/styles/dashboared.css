@@ -49,12 +49,11 @@
     font-weight: 600;
 }
 
-
 .profile-link {
     display: flex;
     align-items: center;
     padding: 12px;
-    margin-top: auto; /* Pushes the profile link to the bottom */
+    margin-top: auto;
     margin-bottom: 5px;
     border-radius: 8px;
     cursor: pointer;
