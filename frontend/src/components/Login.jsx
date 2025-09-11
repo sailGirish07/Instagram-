@@ -61,8 +61,8 @@ export function Login() {
             value={formData.email}
             onChange={handleChange}
           />
-          <br />
-          <br />
+          {/* <br />
+          <br /> */}
           <input
             type="password"
             name="password"
@@ -70,8 +70,8 @@ export function Login() {
             value={formData.password}
             onChange={handleChange}
           />
-          <br />
-          <br />
+          {/* <br />
+          <br /> */}
           <button type="submit">Log in</button>
           <p>
             <a href="/forgot-password">Forgot Password?</a>

@@ -57,8 +57,8 @@ export function ForgotPassword() {
           onChange={handleChange}
           required
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <input
           type="password"
           name="newPassword"
@@ -67,8 +67,8 @@ export function ForgotPassword() {
           onChange={handleChange}
           required
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <input
           type="password"
           name="confirmPassword"
@@ -77,8 +77,8 @@ export function ForgotPassword() {
           onChange={handleChange}
           required
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <button type="submit">Reset Password</button>
       </form>
     </div>

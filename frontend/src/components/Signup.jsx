@@ -60,8 +60,8 @@ export function Signup() {
           onChange={handleChange}
           required
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <input
           type="text"
           name="fullName"
@@ -69,8 +69,8 @@ export function Signup() {
           value={formData.fullName}
           onChange={handleChange}
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <input
           type="text"
           name="userName"
@@ -78,8 +78,8 @@ export function Signup() {
           value={formData.userName}
           onChange={handleChange}
         />
-        <br />
-        <br />
+        {/* <br />
+        <br /> */}
         <input
           type="password"
           name="password"
