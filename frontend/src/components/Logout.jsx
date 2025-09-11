@@ -13,7 +13,7 @@ export default function Logout() {
   return (
     <div className="logout-link" onClick={handleLogout}>
       {/* <i className="fas fa-sign-out-alt"></i> */}
-      <span style={{ color: "red", fontSize: "20px"}}>Log out</span>
+      <span style={{ color: "red", fontSize: "20px" }}>Log out</span>
     </div>
   );
 }

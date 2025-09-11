@@ -1,33 +1,21 @@
 .save-page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* take full screen height */
-  padding: 0;
+  padding: 20px;
 }
 
 .save-page h2 {
   text-align: center;
-  margin: 0;
-  padding: 15px 0;
-  background-color: white; /* keeps it visible on scroll */
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  border-bottom: 1px solid #ddd; /* subtle separator */
+  margin-bottom: 20px;
 }
 
 .save-grid {
-  flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* always 4 per row */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 5px;
-  overflow-y: auto; /* scroll vertically */
-  padding: 10px;
 }
 
 .save-item img {
   width: 100%;
-  aspect-ratio: 1/1; /* keeps square like Instagram */
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
@@ -35,7 +23,7 @@
 }
 
 .save-item img:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
 .no-saved {

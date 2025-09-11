@@ -64,7 +64,7 @@ export default function Comments() {
                   <b className="comment-username">
                     {c.user?.userName || "Unknown"}:
                   </b>
-                  <span className="comment-time">· 2w</span>
+                  {/* <span className="comment-time">· 2w</span> */}
                 </div>
                 <p className="comment-text">{c.text}</p>
               </div>
