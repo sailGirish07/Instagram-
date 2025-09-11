@@ -6,7 +6,7 @@
   width: 100%;
   max-width: 500px;
   padding-right: 10px;
-  overflow-y: auto; /* enable vertical scroll */
+  overflow-y: auto; 
   max-height: 90vh;
  }
 
