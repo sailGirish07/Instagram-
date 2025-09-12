@@ -1,6 +1,8 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const Notification = require("../models/notification");
+const message = require("../models/message");
+const mongoose = require('mongoose');
 
 // Create a post
 exports.createPost = async (req, res) => {
@@ -201,3 +203,4 @@ exports.getSavedPosts = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
