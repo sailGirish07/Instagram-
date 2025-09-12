@@ -18,7 +18,7 @@ export default function CreatePost() {
     formData.append("media", media);
 
     try {
-      await axios.post("http://localhost:8080/posts", formData, {
+      await axios.post("http://localhost:8080/api/v1/posts", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

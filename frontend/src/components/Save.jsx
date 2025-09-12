@@ -10,7 +10,7 @@ export default function Save() {
     const token = localStorage.getItem("token");
     const fetchSavedPosts = async () => {
       try {
-        const res = await fetch("http://localhost:8080/posts/saved", {
+        const res = await fetch("http://localhost:8080/api/v1/posts/saved", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

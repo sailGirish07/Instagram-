@@ -26,7 +26,7 @@ export function ForgotPassword() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:8080/auth/forgot-pass", {
+      const res = await axios.post("http://localhost:8080/api/v1/auth/forgot-pass", {
         email: formData.email,
         newPassword: formData.newPassword,
       });

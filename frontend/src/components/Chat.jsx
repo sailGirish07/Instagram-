@@ -25,7 +25,7 @@ export default function Chat() {
     const fetchData = async () => {
       try {
         const messagesRes = await axios.get(
-          `http://localhost:8080/messages/${receiverId}`,
+          `http://localhost:8080/api/v1/messages/${receiverId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setMessages(messagesRes.data);
@@ -37,7 +37,7 @@ export default function Chat() {
           setReceiver(user);
         } else {
           const userRes = await axios.get(
-            `http://localhost:8080/user/${receiverId}`,
+            `http://localhost:8080/api/v1/user/${receiverId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           setReceiver(userRes.data.user);
@@ -58,7 +58,7 @@ export default function Chat() {
 
     try {
       const res = await axios.post(
-        `http://localhost:8080/messages/${receiverId}`,
+        `http://localhost:8080/api/v1/messages/${receiverId}`,
         { text: input },
         { headers: { Authorization: `Bearer ${token}` } }
       );

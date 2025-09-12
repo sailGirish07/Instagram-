@@ -19,7 +19,7 @@ export default function EditProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/users/profile", {
+        const res = await axios.get("http://localhost:8080/api/v1/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData({
@@ -64,7 +64,7 @@ export default function EditProfile() {
     }
 
     try {
-      await axios.put("http://localhost:8080/users/profile", data, {
+      await axios.put("http://localhost:8080/api/v1/users/profile", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

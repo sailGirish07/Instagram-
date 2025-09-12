@@ -20,11 +20,11 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-app.use("/auth", require("./routes/authRoutes"));
-app.use("/users", require("./routes/userRoutes"));
-app.use("/posts", require("./routes/postRoutes"));
-app.use("/messages", require("./routes/messageRoute"));
-app.use("/notifications", require("./routes/notificationRoutes"));
+app.use("/api/v1/auth", require("./routes/authRoutes"));
+app.use("/api/v1/users", require("./routes/userRoutes"));
+app.use("/api/v1/posts", require("./routes/postRoutes"));
+app.use("/api/v1/messages", require("./routes/messageRoute"));
+app.use("/api/v1/notifications", require("./routes/notificationRoutes"));
 
 // Route not found
 app.use((req, res) => {

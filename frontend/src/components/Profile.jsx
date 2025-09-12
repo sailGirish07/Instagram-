@@ -15,14 +15,14 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         // Fetch user profile
-        const resUser = await axios.get("http://localhost:8080/users/profile", {
+        const resUser = await axios.get("http://localhost:8080/api/v1/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(resUser.data);
 
         // Fetch user posts
         const resPosts = await axios.get(
-          "http://localhost:8080/users/profile-posts",
+          "http://localhost:8080/api/v1/users/profile-posts",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

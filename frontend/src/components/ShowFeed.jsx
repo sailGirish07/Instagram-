@@ -21,10 +21,10 @@ export default function ShowFeed() {
       try {
         // Fetch posts and saved posts simultaneously
         const [postsRes, savedRes] = await Promise.all([
-          fetch("http://localhost:8080/posts", {
+          fetch("http://localhost:8080/api/v1/posts", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:8080/posts/saved", {
+          fetch("http://localhost:8080/api/v1/posts/saved", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -38,7 +38,7 @@ export default function ShowFeed() {
           ...post,
           liked: userId ? post.likes.includes(userId) : false,
           likes: post.likes.length,
-          saved: savedIds.includes(post._id), // ✅ mark saved properly
+          saved: savedIds.includes(post._id), // 
           animate: false,
           user: {
             ...post.user,
@@ -83,7 +83,7 @@ export default function ShowFeed() {
     );
 
     try {
-      const res = await fetch(`http://localhost:8080/posts/${postId}/like`, {
+      const res = await fetch(`http://localhost:8080/api/v1/posts/${postId}/like`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function ShowFeed() {
     );
 
     try {
-      const res = await fetch(`http://localhost:8080/posts/${postId}/save`, {
+      const res = await fetch(`http://localhost:8080/api/v1/posts/${postId}/save`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -8,7 +8,7 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/notifications", {
+        const res = await axios.get("http://localhost:8080/api/v1/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotifications(res.data);
@@ -20,7 +20,7 @@ export default function Notifications() {
     const markAllAsRead = async () => {
       try {
         await axios.put(
-          "http://localhost:8080/notifications/mark-all-read",
+          "http://localhost:8080/api/v1/notifications/mark-all-read",
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

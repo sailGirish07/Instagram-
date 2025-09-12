@@ -24,7 +24,7 @@ export function Signup() {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:8080/auth/signup",
+        "http://localhost:8080/api/v1/auth/signup",
         formData
       );
       alert(res.data.message);

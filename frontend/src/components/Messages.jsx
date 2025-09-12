@@ -16,7 +16,7 @@ export default function Messages() {
     const fetchConversations = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8080/messages/conversations",
+          "http://localhost:8080/api/v1/messages/conversations",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setConversations(res.data);
@@ -32,7 +32,7 @@ export default function Messages() {
     if (sharedPostId) {
       try {
         await axios.post(
-          `http://localhost:8080/messages/${otherUserId}`,
+          `http://localhost:8080/api/v1/messages/${otherUserId}`,
           { post: sharedPostId }, // sending post as message
           { headers: { Authorization: `Bearer ${token}` } }
         );

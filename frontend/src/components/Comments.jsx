@@ -12,7 +12,7 @@ export default function Comments() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch(`http://localhost:8080/posts/${postId}/comments`, {
+    fetch(`http://localhost:8080/api/v1/posts/${postId}/comments`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -24,7 +24,7 @@ export default function Comments() {
     if (!newComment.trim()) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/posts/${postId}/comment`, {
+      const res = await fetch(`http://localhost:8080/api/v1/posts/${postId}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
