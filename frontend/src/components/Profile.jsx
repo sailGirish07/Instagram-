@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../public/styles/profile.css";
-import createPostIcon from "../assets/create-post.png.png";
+// import createPostIcon from "../assets/create-post.png";
 import menu from "../assets/menu.png";
 
 export default function Profile() {
@@ -46,8 +46,10 @@ export default function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-icons">
+      
         <img
-          src={createPostIcon}
+          // src={createPostIcon}
+          src="/assets/create-post.png"
           className="post-icon"
           alt="Create Post"
           onClick={goToCreatePost}

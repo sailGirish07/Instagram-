@@ -1,0 +1,109 @@
+/* Header.css */
+.header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dbdbdb;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+  max-width: 975px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 54px;
+}
+
+.logo h1 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+  cursor: pointer;
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.login-btn,
+.signup-btn {
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.login-btn {
+  background-color: transparent;
+  color: #0095f6;
+  border: 1px solid transparent;
+}
+
+.login-btn:hover {
+  background-color: rgba(0, 149, 246, 0.05);
+  color: #1877f2;
+}
+
+.signup-btn {
+  background-color: #0095f6;
+  color: white;
+  border: 1px solid #0095f6;
+}
+
+.signup-btn:hover {
+  background-color: #1877f2;
+  border-color: #1877f2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 12px 16px;
+  }
+  
+  .logo h1 {
+    font-size: 24px;
+  }
+  
+  .auth-buttons {
+    gap: 8px;
+  }
+  
+  .login-btn,
+  .signup-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 12px 12px;
+  }
+  
+  .logo h1 {
+    font-size: 22px;
+  }
+  
+  .login-btn,
+  .signup-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}

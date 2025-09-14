@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Header'
+// import Header from "./Header";
 
 export function ForgotPassword() {
   const navigate = useNavigate();
@@ -46,6 +48,8 @@ export function ForgotPassword() {
   };
 
   return (
+    <>
+    {/* <Header/> */}
     <div>
       <h1>Reset Password</h1>
       <form onSubmit={handleSubmit}>
@@ -82,5 +86,6 @@ export function ForgotPassword() {
         <button type="submit">Reset Password</button>
       </form>
     </div>
+    </>
   );
 }

@@ -44,19 +44,19 @@ exports.getProfilePosts = async (req, res) => {
 };
 
 // Get all posts (feed)
-exports.getAllPosts = async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .populate("user", "userName profilePic")
-      .populate("comments.user", "userName profilePic")
-      .sort({ createdAt: -1 });
+// exports.getAllPosts = async (req, res) => {
+//   try {
+//     const posts = await Post.find()
+//       .populate("user", "userName profilePic")
+//       .populate("comments.user", "userName profilePic")
+//       .sort({ createdAt: -1 });
 
-    res.json(posts);
-  } catch (err) {
-    console.error("Get posts error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//     res.json(posts);
+//   } catch (err) {
+//     console.error("Get posts error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // Like/unlike post
 exports.toggleLike = async (req, res) => {
@@ -204,3 +204,81 @@ exports.getSavedPosts = async (req, res) => {
   }
 };
 
+
+exports.getAllPosts = async (req, res) => {
+  try {
+    const posts = await Post.aggregate([
+      { $sort: { createdAt: -1 } }, // Sort posts by latest first
+
+      // Lookup to get the post's user details
+      {
+        $lookup: {
+          from: "users",            // users collection
+          localField: "user",       // reference field in Post
+          foreignField: "_id",     // target field in users
+          as: "userDetails"         // output array field
+        }
+      },
+      { $unwind: "$userDetails" },  // Flatten the array to object
+
+      // Lookup to get details of all users who commented on the post
+      {
+        $lookup: {
+          from: "users",
+          localField: "comments.user",
+          foreignField: "_id",
+          as: "commentUsers"
+        }
+      },
+
+      // Map comments to embed user details
+      {
+        $addFields: {
+          comments: {
+            $map: {
+              input: "$comments",
+              as: "comment",
+              in: {
+                _id: "$$comment._id",
+                text: "$$comment.text",
+                createdAt: "$$comment.createdAt",
+                user: {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: "$commentUsers",
+                        as: "cu",
+                        cond: { $eq: ["$$cu._id", "$$comment.user"] }
+                      }
+                    },
+                    0
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+
+      // Shape the output structure
+      {
+        $project: {
+          caption: 1,
+          media: 1,
+          likes: 1,
+          createdAt: 1,
+          user: {
+            userName: "$userDetails.userName",
+            profilePic: "$userDetails.profilePic"
+          },
+          comments: 1
+        }
+      }
+    ]);
+
+    res.json(posts);
+  } catch (err) {
+    console.error("Get posts aggregation error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

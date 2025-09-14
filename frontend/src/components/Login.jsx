@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../public/styles/login.css";
+import LoginImg from '../assets/loginPage.png';
+import Footer from "./Footer";
 
 export function Login() {
   const navigate = useNavigate();
@@ -51,7 +53,12 @@ export function Login() {
 
   return (
     <>
+    <div className="login-wrapper">
+      <div className="img-container">
+        <img src={LoginImg}/>
+      </div>
       <div className="login-container">
+      <div className="login-form">
         <h1>Instagram</h1>
         <form onSubmit={handleSubmit}>
           <input
@@ -74,7 +81,7 @@ export function Login() {
           <br /> */}
           <button type="submit">Log in</button>
           <p>
-            <a href="/forgot-password">Forgot Password?</a>
+            <a href="/forgot-password">Forgotten your Password?</a>
           </p>
         </form>
       </div>
@@ -83,6 +90,10 @@ export function Login() {
           Don't have an account? <a href="/signup">Sign up</a>
         </p>
       </div>
+      </div>
+    
+    </div>
+      {/* <Footer/> */}
     </>
   );
 }
