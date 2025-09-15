@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import "../public/styles/profile.css";
 
 export default function UserProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(() => {
+    // Load from localStorage so it won't reset after refresh
+    return JSON.parse(localStorage.getItem(`follow_state_${id}`)) || false;
+  });
+
   const token = localStorage.getItem("token");
+  const loggedInUserId = JSON.parse(localStorage.getItem("user"))?._id;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -16,38 +21,75 @@ export default function UserProfile() {
         const res = await axios.get(`http://localhost:8080/api/v1/users/user/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUser(res.data.user);
         setPosts(res.data.posts);
+
+        // Only set isFollowing once if localStorage doesn't have a value
+        if (localStorage.getItem(`follow_state_${id}`) === null) {
+          const initialState = res.data.user.followers.some(f => f._id === loggedInUserId);
+          setIsFollowing(initialState);
+          localStorage.setItem(`follow_state_${id}`, JSON.stringify(initialState));
+        }
       } catch (err) {
         console.error("Error fetching user profile:", err);
       }
     };
+
     fetchUser();
-  }, [id, token]);
+  }, [id, token, loggedInUserId]);
 
   if (!user) return <p>Loading...</p>;
 
-  const handleMessageClick = () => {
-    navigate(`/chat/${id}`);
+  const toggleFollow = async () => {
+    if (!token) return navigate("/login");
+
+    try {
+      let res;
+      if (!isFollowing) {
+        res = await axios.put(`http://localhost:8080/api/v1/users/${id}/follow`, {}, { headers: { Authorization: `Bearer ${token}` } });
+        setIsFollowing(true);
+        localStorage.setItem(`follow_state_${id}`, JSON.stringify(true));
+      } else {
+        res = await axios.put(`http://localhost:8080/api/v1/users/${id}/unfollow`, {}, { headers: { Authorization: `Bearer ${token}` } });
+        setIsFollowing(false);
+        localStorage.setItem(`follow_state_${id}`, JSON.stringify(false));
+      }
+      setUser(res.data.user);
+    } catch (err) {
+      console.error("Follow/Unfollow error:", err);
+      alert(err.response?.data?.message || "Action failed");
+    }
   };
+
   return (
     <div className="profile-container">
       <div className="profile-header">
         <div className="profile-left">
           <h2>{user.userName}</h2>
-          <img
-            src={user.profilePic || "https://via.placeholder.com/150"}
-            alt="Profile"
-            className="profile-img"
-          />
+          <img src={user.profilePic || "/default-profile.png"} alt="Profile" className="profile-img" />
           <div className="profile-bio">
-            <p>
-              <strong>{user.fullName}</strong>
-            </p>
+            <p><strong>{user.fullName}</strong></p>
             <p>{user.bio || "Bio"}</p>
 
             <button
-              onClick={handleMessageClick}
+              onClick={toggleFollow}
+              style={{
+                marginTop: "10px",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                border: "none",
+                backgroundColor: isFollowing ? "#e5e5e5" : "#0095f6",
+                color: isFollowing ? "black" : "white",
+                cursor: "pointer",
+                marginRight: "10px",
+              }}
+            >
+              {isFollowing ? "Following" : "Follow"}
+            </button>
+
+            <button
+              onClick={() => navigate(`/chat/${id}`)}
               style={{
                 marginTop: "10px",
                 padding: "8px 16px",
@@ -65,15 +107,9 @@ export default function UserProfile() {
 
         <div className="profile-right">
           <div className="profile-stats">
-            <p>
-              <strong>{posts.length}</strong> posts
-            </p>
-            <p>
-              <strong>{user.followers?.length || 0}</strong> followers
-            </p>
-            <p>
-              <strong>{user.following?.length || 0}</strong> following
-            </p>
+            <p><strong>{posts.length}</strong> posts</p>
+            <p><strong>{user.followers?.length || 0}</strong> followers</p>
+            <p><strong>{user.following?.length || 0}</strong> following</p>
           </div>
         </div>
       </div>

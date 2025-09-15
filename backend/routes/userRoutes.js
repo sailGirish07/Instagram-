@@ -5,6 +5,11 @@ const {
   getUserPosts,
   getUserById,
   searchUsers,
+  followUser,
+  unfollowUser,
+  getFollowers,
+  getFollowing
+  
 } = require("../controllers/userController");
 
 const auth = require("../middlewares/authMiddleware");
@@ -20,5 +25,18 @@ router.get("/profile-posts", auth, getUserPosts);
 // Public profile & search
 router.get("/user/:id", auth, getUserById);
 router.get("/search", auth, searchUsers);
+
+// Follow a user
+router.put("/:userId/follow", auth, followUser);
+
+// Unfollow a user
+router.put("/:userId/unfollow", auth, unfollowUser);
+
+// Get followers
+router.get("/:userId/followers", auth, getFollowers);
+
+// Get following
+router.get("/:userId/following", auth, getFollowing);
+
 
 module.exports = router;

@@ -15,6 +15,7 @@ import Notification from "./components/Notification";
 import Comments from "./components/Comments";
 import Menu from "./components/Menu";
 import Save from "./components/Save";
+import List from "./components/List";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/comments/:postId" element={<Comments />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/saved" element={<Save />} />
+        <Route path="/list/:type/:userId" element={<List/>}/>
       </Routes>
     </Router>
   );

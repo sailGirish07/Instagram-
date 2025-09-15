@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../public/styles/profile.css";
-// import createPostIcon from "../assets/create-post.png";
+import createPostIcon from "../assets/create-post.png";
 import menu from "../assets/menu.png";
 
 export default function Profile() {
@@ -43,13 +43,18 @@ export default function Profile() {
   const goToCreatePost = () => navigate("/post");
   const goToMenu = () => navigate("/menu");
 
+   // Navigate to List.jsx with list type and userId
+  const handleListNavigation = (type) => {
+    navigate(`/list/${type}/${user._id}`);
+  };
+
   return (
     <div className="profile-container">
       <div className="profile-icons">
       
         <img
-          // src={createPostIcon}
-          src="/assets/create-post.png"
+          src={createPostIcon}
+          // src="/assets/create-post.png"
           className="post-icon"
           alt="Create Post"
           onClick={goToCreatePost}
@@ -74,13 +79,28 @@ export default function Profile() {
 
         <div className="profile-right">
           <div className="profile-stats">
-            <p>
+            {/* <p>
               <strong>{posts.length}</strong> posts
             </p>
             <p>
               <strong>{user.followers?.length || 0}</strong> followers
             </p>
             <p>
+              <strong>{user.following?.length || 0}</strong> following
+            </p> */}
+             {/* Clickable followers */}
+            <p
+              style={{ cursor: "pointer" }}
+              onClick={() => handleListNavigation("followers")}
+            >
+              <strong>{user.followers?.length || 0}</strong> followers
+            </p>
+
+            {/* Clickable following */}
+            <p
+              style={{ cursor: "pointer" }}
+              onClick={() => handleListNavigation("following")}
+            >
               <strong>{user.following?.length || 0}</strong> following
             </p>
           </div>
@@ -101,3 +121,4 @@ export default function Profile() {
     </div>
   );
 }
+
