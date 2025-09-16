@@ -25,6 +25,7 @@
 .user-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 10px 15px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
@@ -44,9 +45,49 @@
   border: 1px solid #ddd;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.message-btn { 
+  background-color: rgb(104, 98, 98);
+  color: white;
+}
+
+
+.unfollow-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.unfollow-btn:hover {
+  background-color: #d32f2f;
+}
+
 .user-name {
   font-weight: bold;
-  color: #333;
+  color: #777373;
+  font-size: 14px;
+}
+.user-fullName {
+  font-size: 14px;
+  color: black;
+  margin-top: 2px;
 }
 
 /* Empty list message */

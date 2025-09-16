@@ -18,18 +18,26 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/v1/users/user/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `http://localhost:8080/api/v1/users/user/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         setUser(res.data.user);
         setPosts(res.data.posts);
 
         // Only set isFollowing once if localStorage doesn't have a value
         if (localStorage.getItem(`follow_state_${id}`) === null) {
-          const initialState = res.data.user.followers.some(f => f._id === loggedInUserId);
+          const initialState = res.data.user.followers.some(
+            (f) => f._id === loggedInUserId
+          );
           setIsFollowing(initialState);
-          localStorage.setItem(`follow_state_${id}`, JSON.stringify(initialState));
+          localStorage.setItem(
+            `follow_state_${id}`,
+            JSON.stringify(initialState)
+          );
         }
       } catch (err) {
         console.error("Error fetching user profile:", err);
@@ -45,31 +53,68 @@ export default function UserProfile() {
     if (!token) return navigate("/login");
 
     try {
-      let res;
+      let updatedUser;
+
       if (!isFollowing) {
-        res = await axios.put(`http://localhost:8080/api/v1/users/${id}/follow`, {}, { headers: { Authorization: `Bearer ${token}` } });
+        // Follow
+        await axios.put(
+          `http://localhost:8080/api/v1/users/${id}/follow`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // Update user followers locally
+        updatedUser = {
+          ...user,
+          followers: [...(user.followers || []), { _id: loggedInUserId }],
+        };
         setIsFollowing(true);
         localStorage.setItem(`follow_state_${id}`, JSON.stringify(true));
       } else {
-        res = await axios.put(`http://localhost:8080/api/v1/users/${id}/unfollow`, {}, { headers: { Authorization: `Bearer ${token}` } });
+        // Unfollow
+        await axios.put(
+          `http://localhost:8080/api/v1/users/${id}/unfollow`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // Remove logged-in user from followers locally
+        updatedUser = {
+          ...user,
+          followers: (user.followers || []).filter(
+            (f) => f._id !== loggedInUserId
+          ),
+        };
         setIsFollowing(false);
         localStorage.setItem(`follow_state_${id}`, JSON.stringify(false));
       }
-      setUser(res.data.user);
+
+      // Update user state immediately
+      setUser(updatedUser);
     } catch (err) {
       console.error("Follow/Unfollow error:", err);
       alert(err.response?.data?.message || "Action failed");
     }
   };
+  // Navigate to List.jsx with list type and userId
+  // const handleListNavigation = (type) => {
+  //   navigate(`/list/${type}/${user._id}`);
+  // };
 
   return (
     <div className="profile-container">
       <div className="profile-header">
         <div className="profile-left">
           <h2>{user.userName}</h2>
-          <img src={user.profilePic || "/default-profile.png"} alt="Profile" className="profile-img" />
+          <img
+            src={user.profilePic || "/default-profile.png"}
+            alt="Profile"
+            className="profile-img"
+          />
           <div className="profile-bio">
-            <p><strong>{user.fullName}</strong></p>
+            <p>
+              <strong>{user.fullName}</strong>
+            </p>
             <p>{user.bio || "Bio"}</p>
 
             <button
@@ -107,9 +152,31 @@ export default function UserProfile() {
 
         <div className="profile-right">
           <div className="profile-stats">
-            <p><strong>{posts.length}</strong> posts</p>
-            <p><strong>{user.followers?.length || 0}</strong> followers</p>
-            <p><strong>{user.following?.length || 0}</strong> following</p>
+            <p>
+              <strong>{posts.length}</strong> posts
+            </p>
+
+            <p>
+              <strong>{user.followers?.length || 0}</strong> followers
+            </p>
+            <p>
+              <strong>{user.following?.length || 0}</strong> following
+            </p>
+            {/* Clickable followers */}
+            {/* <p
+              style={{ cursor: "pointer" }}
+              onClick={() => handleListNavigation("followers")}
+            >
+              <strong>{user.followers?.length || 0}</strong> followers
+            </p> */}
+
+            {/* Clickable following */}
+            {/* <p
+              style={{ cursor: "pointer" }}
+              onClick={() => handleListNavigation("following")}
+            >
+              <strong>{user.following?.length || 0}</strong> following
+            </p> */}
           </div>
         </div>
       </div>

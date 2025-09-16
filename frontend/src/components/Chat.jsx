@@ -20,7 +20,7 @@ export default function Chat() {
     }, 100);
   };
 
-  // Fetch messages and receiver info
+  // Fetch messages + receiver info
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,19 +28,26 @@ export default function Chat() {
           `http://localhost:8080/api/v1/messages/${receiverId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setMessages(messagesRes.data);
 
-        if (messagesRes.data.length > 0) {
-          const first = messagesRes.data[0];
+        //filter invalid messages (avoid null sender/receiver crash)
+        const validMessages = messagesRes.data.filter(
+          (msg) => msg.sender && msg.receiver
+        );
+
+        setMessages(validMessages);
+
+        if (validMessages.length > 0) {
+          const first = validMessages[0];
           const user =
             first.sender._id === receiverId ? first.sender : first.receiver;
           setReceiver(user);
         } else {
+          // Fetch receiver info if no messages exist
           const userRes = await axios.get(
-            `http://localhost:8080/api/v1/user/${receiverId}`,
+            `http://localhost:8080/api/v1/users/${receiverId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          setReceiver(userRes.data.user);
+          setReceiver(userRes.data);
         }
 
         scrollToBottom();
@@ -78,15 +85,16 @@ export default function Chat() {
 
   return (
     <div className="chat-container">
+      {/* Header */}
       <div className="chat-header">
         {receiver ? (
           <>
             <img
-              src={receiver.profilePic || "https://via.placeholder.com/40"}
-              alt={receiver.userName}
+              src={receiver?.profilePic || "https://via.placeholder.com/40"}
+              alt={receiver?.userName || "User"}
               className="avatar"
             />
-            <span className="chat-title">{receiver.userName}</span>
+            <span className="chat-title">{receiver?.userName}</span>
           </>
         ) : (
           <span className="chat-title">Loading...</span>
@@ -98,23 +106,22 @@ export default function Chat() {
         {messages.length === 0 ? (
           <div className="empty">Start typing...</div>
         ) : (
-          messages.map((msg, i) => {
-            const isSent = msg.sender._id !== receiverId; // true if logged-in user sent it
+          messages.map((msg) => {
+            const isSent = msg.sender?._id !== receiverId;
             const senderImage =
-              msg.sender.profilePic || "https://via.placeholder.com/30";
+              msg.sender?.profilePic || "https://via.placeholder.com/30";
 
             return (
               <div
-                key={i}
+                key={msg._id}
                 className={`message-row ${isSent ? "sent" : "received"}`}
               >
-                {/* Show avatar for both sent and received */}
                 <img
                   src={senderImage}
-                  alt={msg.sender.userName}
+                  alt={msg.sender?.userName || "User"}
                   className="message-avatar"
                 />
-                <div className="message" key={msg._id}>
+                <div className="message">
                   {msg.post ? (
                     <div className="shared-post">
                       <img

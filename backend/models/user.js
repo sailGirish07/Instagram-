@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema({
     },
     userName :String,
     profilePic : String,
+    fullName : String,
   },
   ],
   following: [
@@ -64,6 +65,7 @@ const userSchema = new mongoose.Schema({
     },
     userName :String,
     profilePic : String,
+    fullName : String,
   }
   ],
 });

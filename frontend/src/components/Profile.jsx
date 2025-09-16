@@ -15,9 +15,12 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         // Fetch user profile
-        const resUser = await axios.get("http://localhost:8080/api/v1/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const resUser = await axios.get(
+          "http://localhost:8080/api/v1/users/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setUser(resUser.data);
 
         // Fetch user posts
@@ -43,7 +46,7 @@ export default function Profile() {
   const goToCreatePost = () => navigate("/post");
   const goToMenu = () => navigate("/menu");
 
-   // Navigate to List.jsx with list type and userId
+  // In your Profile.jsx, ensure the navigation works correctly
   const handleListNavigation = (type) => {
     navigate(`/list/${type}/${user._id}`);
   };
@@ -51,7 +54,6 @@ export default function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-icons">
-      
         <img
           src={createPostIcon}
           // src="/assets/create-post.png"
@@ -79,24 +81,15 @@ export default function Profile() {
 
         <div className="profile-right">
           <div className="profile-stats">
-            {/* <p>
+            <p>
               <strong>{posts.length}</strong> posts
             </p>
-            <p>
-              <strong>{user.followers?.length || 0}</strong> followers
-            </p>
-            <p>
-              <strong>{user.following?.length || 0}</strong> following
-            </p> */}
-             {/* Clickable followers */}
             <p
               style={{ cursor: "pointer" }}
               onClick={() => handleListNavigation("followers")}
             >
               <strong>{user.followers?.length || 0}</strong> followers
             </p>
-
-            {/* Clickable following */}
             <p
               style={{ cursor: "pointer" }}
               onClick={() => handleListNavigation("following")}
@@ -106,7 +99,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-
       <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
 
       {/* Posts grid */}
@@ -121,4 +113,3 @@ export default function Profile() {
     </div>
   );
 }
-

@@ -29,7 +29,7 @@ exports.sendMessage = async (req, res) => {
     await message.populate([
       { path: "sender", select: "userName profilePic" },
       { path: "receiver", select: "userName profilePic" },
-      { path: "post", select: "imageUrl title" },
+      { path: "post", select: "media caption" },
     ]);
 
     res.json(message);
