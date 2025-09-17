@@ -204,7 +204,7 @@ exports.getSavedPosts = async (req, res) => {
   }
 };
 
-
+//Feed
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.aggregate([
@@ -233,25 +233,25 @@ exports.getAllPosts = async (req, res) => {
 
       // Map comments to embed user details
       {
-        $addFields: {
+        $addFields: {                   //Replace comment array to new transformed array 
           comments: {
-            $map: {
+            $map: {                     //For each comment produce a new object
               input: "$comments",
-              as: "comment",
-              in: {
+              as: "comment",                   //variable for each comment
+              in: {                            //each comment will look like after transformation
                 _id: "$$comment._id",
                 text: "$$comment.text",
                 createdAt: "$$comment.createdAt",
-                user: {
-                  $arrayElemAt: [
+                user: {                         //find matching user 
+                  $arrayElemAt: [               // Extract the first match 
                     {
-                      $filter: {
-                        input: "$commentUsers",
-                        as: "cu",
+                      $filter: {                //Filter array to find correct user
+                        input: "$commentUsers",       //all users who comment
+                        as: "cu",                     //variable for user 
                         cond: { $eq: ["$$cu._id", "$$comment.user"] }
                       }
                     },
-                    0
+                    0                         //First matching user 
                   ]
                 }
               }

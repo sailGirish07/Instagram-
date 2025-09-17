@@ -83,170 +83,67 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
-// Follow a user
-// exports.followUser = async (req, res) => {
-//   const session = await mongoose.startSession();
-//   session.startTransaction();
-//   try {
-//     const loggedInUserId = req.userId; // from auth middleware
-//     const userIdToFollow = req.params.userId;
-
-//     if (userIdToFollow === loggedInUserId) {
-//       return res.status(400).json({ message: "You cannot follow yourself" });
-//     }
-//     const [loggedInUser, userToFollow] = await Promise.all([
-//       User.findById(loggedInUserId).session(session),
-//       User.findById(userIdToFollow).session(session),
-//     ]);
-
-//     if (!userToFollow || !loggedInUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     if (
-//       loggedInUser.following.some((f) => f.userId.toString() === userIdToFollow)
-//     ) {
-//       return res.status(400).json({ message: "Already following this user" });
-//     }
-
-//     // Add to following & followers
-//     loggedInUser.following.push({
-//       userId: userIdToFollow,
-//       userName: userToFollow.userName,
-//       profilePic: userToFollow.profilePic,
-//       fullName: userToFollow.fullName,
-//     });
-
-//     userToFollow.followers.push({
-//       userId: loggedInUserId,
-//       userName: loggedInUser.userName,
-//       profilePic: loggedInUser.profilePic,
-//       fullName: loggedInUser.fullName,
-//     });
-
-//     await loggedInUser.save({ session });
-//     await userToFollow.save({ session });
-
-//     await session.commitTransaction();
-//     res.json({ message: "Followed successfully", user: userToFollow });
-//   } catch (err) {
-//     await session.abortTransaction();
-//     console.error("Follow user error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   } finally {
-//     session.endSession();
-//   }
-// };
 // Follow User
 exports.followUser = async (req, res) => {
   const session = await mongoose.startSession();
-  session.startTransaction();
 
   try {
-    const loggedInUserId = req.userId; // from auth middleware
+    const loggedInUserId = req.userId; 
     const userIdToFollow = req.params.userId;
 
     if (userIdToFollow === loggedInUserId) {
       return res.status(400).json({ message: "You cannot follow yourself" });
     }
 
-    const [loggedInUser, userToFollow] = await Promise.all([
-      User.findById(loggedInUserId).session(session),
-      User.findById(userIdToFollow).session(session),
-    ]);
+    await session.withTransaction(async () => {
+      const [loggedInUser, userToFollow] = await Promise.all([
+        User.findById(loggedInUserId).session(session),
+        User.findById(userIdToFollow).session(session),
+      ]);
 
-    if (!loggedInUser || !userToFollow) {
-      return res.status(404).json({ message: "User not found" });
-    }
+      if (!loggedInUser || !userToFollow) {
+        throw new Error("User not found");
+      }
 
-    // Check if already following
-    const isAlreadyFollowing = (loggedInUser.following || []).some(
-      (f) => (f.userId || f._id).toString() === userIdToFollow
-    );
+      // Already following check
+      const isAlreadyFollowing = (loggedInUser.following || []).some(
+        (f) => (f.userId || f._id).toString() === userIdToFollow
+      );
+      if (isAlreadyFollowing) {
+        throw new Error("Already following this user");
+      }
 
-    if (isAlreadyFollowing) {
-      return res.status(400).json({ message: "Already following this user" });
-    }
+      // Add to following & followers
+      loggedInUser.following.push({
+        userId: userToFollow._id,
+        userName: userToFollow.userName,
+        profilePic: userToFollow.profilePic,
+        fullName: userToFollow.fullName,
+      });
 
-    // Add to following & followers safely
-    loggedInUser.following.push({
-      userId: userToFollow._id,
-      userName: userToFollow.userName,
-      profilePic: userToFollow.profilePic,
-      fullName: userToFollow.fullName,
+      userToFollow.followers.push({
+        userId: loggedInUser._id,
+        userName: loggedInUser.userName,
+        profilePic: loggedInUser.profilePic,
+        fullName: loggedInUser.fullName,
+      });
+
+      await loggedInUser.save({ session });
+      await userToFollow.save({ session });
     });
 
-    userToFollow.followers.push({
-      userId: loggedInUser._id,
-      userName: loggedInUser.userName,
-      profilePic: loggedInUser.profilePic,
-      fullName: loggedInUser.fullName,
-    });
-
-    // Save both users
-    await loggedInUser.save({ session });
-    await userToFollow.save({ session });
-
-    // Commit transaction
-    await session.commitTransaction();
-
-    res.json({ message: "Followed successfully", user: userToFollow });
+    res.json({ message: "Followed successfully" });
   } catch (err) {
-    await session.abortTransaction();
     console.error("Follow user error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(400).json({ message: err.message });
   } finally {
     session.endSession();
   }
 };
 
-
-//Unfollow User
-// exports.unfollowUser = async (req, res) => {
-//   const session = await mongoose.startSession();
-//   session.startTransaction();
-//   try {
-//     const loggedInUserId = req.userId;
-//     const userIdToUnfollow = req.params.userId;
-
-//     if (userIdToUnfollow === loggedInUserId) {
-//       return res.status(400).json({ message: "You cannot unfollow yourself" });
-//     }
-
-//     const [loggedInUser, userToUnfollow] = await Promise.all([
-//       User.findById(loggedInUserId).session(session),
-//       User.findById(userIdToUnfollow).session(session),
-//     ]);
-
-//     if (!loggedInUser || !userToUnfollow) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     loggedInUser.following = (loggedInUser.following || []).filter(
-//       (f) => f.userId.toString() !== userIdToUnfollow
-//     );
-//     userToUnfollow.followers = (userToUnfollow.followers || []).filter(
-//       (f) => f.userId.toString() !== loggedInUserId
-//     );
-
-//     await loggedInUser.save({ session });
-//     await userToUnfollow.save({ session });
-
-//     // commit transaction
-//     await session.commitTransaction();
-
-//     res.json({ message: "Unfollowed successfully", user: userToUnfollow });
-//   } catch (err) {
-//     await session.abortTransaction();
-//     console.error("Unfollow user error:", err.message, err.stack);
-//     res.status(500).json({ message: "Server error", error: err.message });
-//   } finally {
-//     session.endSession();
-//   }
-// };
 // Unfollow User
 exports.unfollowUser = async (req, res) => {
   const session = await mongoose.startSession();
-  session.startTransaction();
 
   try {
     const loggedInUserId = req.userId;
@@ -256,73 +153,95 @@ exports.unfollowUser = async (req, res) => {
       return res.status(400).json({ message: "You cannot unfollow yourself" });
     }
 
-    // Fetch both users within session
-    const [loggedInUser, userToUnfollow] = await Promise.all([
-      User.findById(loggedInUserId).session(session),
-      User.findById(userIdToUnfollow).session(session),
-    ]);
+    await session.withTransaction(async () => {
+      const [loggedInUser, userToUnfollow] = await Promise.all([
+        User.findById(loggedInUserId).session(session),
+        User.findById(userIdToUnfollow).session(session),
+      ]);
 
-    if (!loggedInUser || !userToUnfollow) {
-      return res.status(404).json({ message: "User not found" });
-    }
+      if (!loggedInUser || !userToUnfollow) {
+        throw new Error("User not found");
+      }
 
-    // Remove the target user from logged-in user's following
-    loggedInUser.following = (loggedInUser.following || []).filter((f) => {
-      const id = f.userId || f._id;
-      return id.toString() !== userIdToUnfollow;
+      loggedInUser.following = (loggedInUser.following || []).filter(
+        (f) => (f.userId || f._id).toString() !== userIdToUnfollow
+      );
+
+      userToUnfollow.followers = (userToUnfollow.followers || []).filter(
+        (f) => (f.userId || f._id).toString() !== loggedInUserId
+      );
+
+      await loggedInUser.save({ session });
+      await userToUnfollow.save({ session });
     });
 
-    // Remove logged-in user from target user's followers
-    userToUnfollow.followers = (userToUnfollow.followers || []).filter((f) => {
-      const id = f.userId || f._id;
-      return id.toString() !== loggedInUserId;
-    });
-
-    // Save both users
-    await loggedInUser.save({ session });
-    await userToUnfollow.save({ session });
-
-    // Commit transaction
-    await session.commitTransaction();
-
-    res.json({ message: "Unfollowed successfully", user: userToUnfollow });
+    res.json({ message: "Unfollowed successfully" });
   } catch (err) {
-    await session.abortTransaction();
     console.error("Unfollow user error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(400).json({ message: err.message });
   } finally {
     session.endSession();
   }
 };
 
-
-// getFollowers and getFollowing functions
+// Get Followers
 exports.getFollowers = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId).select("followers");
+    const { userId } = req.params;
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // Fetch logged-in user's following list
+    const loggedInUser = await User.findById(req.userId).select("following");
+    const loggedInFollowing = loggedInUser?.following || [];
 
-    // Return the followers array directly (it already contains the embedded data)
-    res.json(user.followers || []);
+    // Fetch target user's followers
+    const user = await User.findById(userId).select("followers");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Normalize and add isFollowedByMe flag
+    const followersWithFlag = (user.followers || []).map((f) => ({
+      userId: f.userId,
+      userName: f.userName,
+      profilePic: f.profilePic,
+      fullName: f.fullName,
+      isFollowedByMe: loggedInFollowing.some((follow) =>
+        follow.userId.equals(f.userId)
+      ),
+    }));
+
+    res.json(followersWithFlag);
   } catch (err) {
     console.error("Get followers error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// Get Following
 exports.getFollowing = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId).select("following");
+    const { userId } = req.params;
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // Fetch logged-in user's following list
+    const loggedInUser = await User.findById(req.userId).select("following");
+    const loggedInFollowing = loggedInUser?.following || [];
 
-    // Return the following array directly (it already contains the embedded data)
-    res.json(user.following || []);
+    // Fetch target user's following
+    const user = await User.findById(userId).select("following");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Normalize and add isFollowedByMe flag
+    const followingWithFlag = (user.following || []).map((f) => ({
+      userId: f.userId,
+      userName: f.userName,
+      profilePic: f.profilePic,
+      fullName: f.fullName,
+      isFollowedByMe: loggedInFollowing.some((follow) =>
+        follow.userId.equals(f.userId)
+      ),
+    }));
+
+    res.json(followingWithFlag);
   } catch (err) {
     console.error("Get following error:", err);
     res.status(500).json({ message: "Server error" });

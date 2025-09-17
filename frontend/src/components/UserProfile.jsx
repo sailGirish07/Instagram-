@@ -82,7 +82,7 @@ export default function UserProfile() {
         updatedUser = {
           ...user,
           followers: (user.followers || []).filter(
-            (f) => f._id !== loggedInUserId
+            (f) => f.userId !== loggedInUserId
           ),
         };
         setIsFollowing(false);
@@ -97,9 +97,9 @@ export default function UserProfile() {
     }
   };
   // Navigate to List.jsx with list type and userId
-  // const handleListNavigation = (type) => {
-  //   navigate(`/list/${type}/${user._id}`);
-  // };
+  const handleListNavigation = (type) => {
+    navigate(`/list/${type}/${user._id}`);
+  };
 
   return (
     <div className="profile-container">
@@ -156,27 +156,28 @@ export default function UserProfile() {
               <strong>{posts.length}</strong> posts
             </p>
 
-            <p>
+            {/* <p>
               <strong>{user.followers?.length || 0}</strong> followers
             </p>
             <p>
               <strong>{user.following?.length || 0}</strong> following
-            </p>
+            </p> */}
             {/* Clickable followers */}
-            {/* <p
+            <p
               style={{ cursor: "pointer" }}
               onClick={() => handleListNavigation("followers")}
             >
               <strong>{user.followers?.length || 0}</strong> followers
-            </p> */}
+            </p>
 
             {/* Clickable following */}
-            {/* <p
+            <p
               style={{ cursor: "pointer" }}
               onClick={() => handleListNavigation("following")}
             >
               <strong>{user.following?.length || 0}</strong> following
-            </p> */}
+            </p>
+
           </div>
         </div>
       </div>

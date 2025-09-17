@@ -18,9 +18,6 @@ router.post("/", auth, upload.single("media"), createPost);
 // Get profile posts
 router.get("/profile-posts", auth, getProfilePosts);
 
-// Get aggregated feed data (replaces old getAllPosts)
-// router.get("/feed", auth, getFeedData);
-
 router.get("/", auth, getAllPosts);
 
 // Like/unlike a post
