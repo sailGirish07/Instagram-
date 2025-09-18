@@ -83,6 +83,7 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
+
 // Follow User
 exports.followUser = async (req, res) => {
   const session = await mongoose.startSession();
