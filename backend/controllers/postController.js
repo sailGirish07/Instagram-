@@ -1,8 +1,8 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const Notification = require("../models/notification");
-const message = require("../models/message");
-const mongoose = require('mongoose');
+// const message = require("../models/message");
+// const mongoose = require('mongoose');
 
 // Create a post
 exports.createPost = async (req, res) => {
@@ -12,6 +12,15 @@ exports.createPost = async (req, res) => {
       return res.status(400).json({ message: "No media file uploaded" });
     }
     const filePath = `/uploads/${req.file.filename}`;
+
+    //  // Determine media type
+    // const fileType = req.file.mimetype.startsWith("video/") ? "video" : "image";
+
+    // const post = new Post({
+    //   caption,
+    //   media: { url: filePath, type: fileType },
+    //   user: req.userId,
+    // });
 
     const post = new Post({
       caption,

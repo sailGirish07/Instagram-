@@ -1,10 +1,10 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Login } from "./components/Login";
-import { Signup } from "./components/Signup";
+import { Login } from "./Pages/Login";
+import { Signup } from "./Pages/Signup";
 import { ForgotPassword } from "./components/ForgotPassword";
-import Home from "./components/Home";
+import Home from "./Pages/Home";
 import Profile from "./components/Profile";
 import EditProfile from "./components/EditProfil";
 import Post from "./components/Post";

@@ -133,3 +133,31 @@
     transform: scale(1);
   }
 }
+/* Media container */
+/* .post-media {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  border-radius: 8px; 
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.post-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+} */
+
+/* ✅ New video styling */
+.post-video {
+  width: 100%;
+  height: 350px;
+  object-fit: cover; /* ✅ Fill like Instagram */
+  /* border-radius: 8px; */
+}
