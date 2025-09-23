@@ -36,7 +36,7 @@ function App() {
         <Route path="/comments/:postId" element={<Comments />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/saved" element={<Save />} />
-        <Route path="/list/:type/:userId" element={<List/>}/>
+        <Route path="/list/:type/:userId" element={<List />} />
       </Routes>
     </Router>
   );

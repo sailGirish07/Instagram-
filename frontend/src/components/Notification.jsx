@@ -8,9 +8,12 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/notifications", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/notifications",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setNotifications(res.data);
       } catch (err) {
         console.error("Error fetching notifications:", err);
@@ -34,8 +37,6 @@ export default function Notifications() {
     const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
   }, [token]);
-
-  // const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="notifications-container">

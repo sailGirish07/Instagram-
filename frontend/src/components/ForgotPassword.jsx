@@ -1,8 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './Header'
-// import Header from "./Header";
+import "./Header";
 
 export function ForgotPassword() {
   const navigate = useNavigate();
@@ -28,10 +27,13 @@ export function ForgotPassword() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:8080/api/v1/auth/forgot-pass", {
-        email: formData.email,
-        newPassword: formData.newPassword,
-      });
+      const res = await axios.post(
+        "http://localhost:8080/api/v1/auth/forgot-pass",
+        {
+          email: formData.email,
+          newPassword: formData.newPassword,
+        }
+      );
       console.log("Password reset successfully", res.data);
       setFormData({
         email: "",
@@ -49,43 +51,43 @@ export function ForgotPassword() {
 
   return (
     <>
-    {/* <Header/> */}
-    <div>
-      <h1>Reset Password</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        {/* <br />
+      {/* <Header/> */}
+      <div>
+        <h1>Reset Password</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          {/* <br />
         <br /> */}
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="New Password"
-          value={formData.newPassword}
-          onChange={handleChange}
-          required
-        />
-        {/* <br />
+          <input
+            type="password"
+            name="newPassword"
+            placeholder="New Password"
+            value={formData.newPassword}
+            onChange={handleChange}
+            required
+          />
+          {/* <br />
         <br /> */}
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
-        {/* <br />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          {/* <br />
         <br /> */}
-        <button type="submit">Reset Password</button>
-      </form>
-    </div>
+          <button type="submit">Reset Password</button>
+        </form>
+      </div>
     </>
   );
 }

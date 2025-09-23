@@ -19,9 +19,12 @@ export default function EditProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/users/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setFormData({
           fullName: res.data.fullName || "",
           userName: res.data.userName || "",
@@ -108,10 +111,10 @@ export default function EditProfile() {
           value={formData.bio}
           onChange={handleChange}
           placeholder="Bio"
-          rows={6} // show a bit taller for editing
+          rows={6}
           style={{
             resize: "vertical",
-            whiteSpace: "pre-line", // preserves line breaks as user types
+            whiteSpace: "pre-line",
           }}
         />
         <label>Profile Picture:</label>

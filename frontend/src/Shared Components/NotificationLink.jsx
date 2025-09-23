@@ -8,9 +8,12 @@ export default function NotificationsLink() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/notifications", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/notifications",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const unread = res.data.filter((n) => !n.read).length;
         setUnreadCount(unread);
       } catch (err) {

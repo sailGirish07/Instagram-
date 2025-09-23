@@ -1,23 +1,23 @@
-import React from 'react';
-import '../public/styles/footer.css';
+import React from "react";
+import "../public/styles/footer.css";
 
 const Footer = () => {
   const footerLinks = [
-    { text: 'Meta', href: '#' },
-    { text: 'About', href: '#' },
-    { text: 'Blog', href: '#' },
-    { text: 'Jobs', href: '#' },
-    { text: 'Help', href: '#' },
-    { text: 'API', href: '#' },
-    { text: 'Privacy', href: '#' },
-    { text: 'Terms', href: '#' },
-    { text: 'Locations', href: '#' },
-    { text: 'Instagram Lite', href: '#' },
-    { text: 'Meta AI', href: '#' },
-    { text: 'Meta AI articles', href: '#' },
-    { text: 'Threads', href: '#' },
-    { text: 'Contact uploading and non-users', href: '#' },
-    { text: 'Meta Verified', href: '#' }
+    { text: "Meta", href: "#" },
+    { text: "About", href: "#" },
+    { text: "Blog", href: "#" },
+    { text: "Jobs", href: "#" },
+    { text: "Help", href: "#" },
+    { text: "API", href: "#" },
+    { text: "Privacy", href: "#" },
+    { text: "Terms", href: "#" },
+    { text: "Locations", href: "#" },
+    { text: "Instagram Lite", href: "#" },
+    { text: "Meta AI", href: "#" },
+    { text: "Meta AI articles", href: "#" },
+    { text: "Threads", href: "#" },
+    { text: "Contact uploading and non-users", href: "#" },
+    { text: "Meta Verified", href: "#" },
   ];
 
   return (
@@ -30,7 +30,7 @@ const Footer = () => {
             </a>
           ))}
         </div>
-        
+
         <div className="footer-bottom">
           <div className="language-selector">
             <select className="language-select">
@@ -46,7 +46,7 @@ const Footer = () => {
               <option value="zh">中文</option>
             </select>
           </div>
-          
+
           <div className="copyright">
             <span>© 2025 Instagram from Meta</span>
           </div>

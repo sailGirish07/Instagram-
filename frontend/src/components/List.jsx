@@ -103,8 +103,9 @@ export default function List() {
                   </button>
 
                   {/* SELF PROFILE CASE */}
-                  {isSelfProfile && type === "followers" && (
-                    u.isFollowedByMe ? (
+                  {isSelfProfile &&
+                    type === "followers" &&
+                    (u.isFollowedByMe ? (
                       <button
                         className="btn unfollow-btn"
                         onClick={() => handleUnfollow(u.userId)}
@@ -118,8 +119,7 @@ export default function List() {
                       >
                         Follow
                       </button>
-                    )
-                  )}
+                    ))}
 
                   {isSelfProfile && type === "following" && (
                     <button
@@ -131,8 +131,8 @@ export default function List() {
                   )}
 
                   {/* OTHER USER PROFILE CASE */}
-                  {!isSelfProfile && (
-                    u.isFollowedByMe ? (
+                  {!isSelfProfile &&
+                    (u.isFollowedByMe ? (
                       <button
                         className="btn unfollow-btn"
                         onClick={() => handleUnfollow(u.userId)}
@@ -146,8 +146,7 @@ export default function List() {
                       >
                         Follow
                       </button>
-                    )
-                  )}
+                    ))}
                 </div>
               </li>
             );
@@ -157,4 +156,3 @@ export default function List() {
     </div>
   );
 }
-

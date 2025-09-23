@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../public/styles/login.css";
-import LoginImg from '../assets/loginPage.png';
+import LoginImg from "../assets/loginPage.png";
 import Footer from "../Shared Components/Footer";
 
 export function Login() {
@@ -53,47 +53,46 @@ export function Login() {
 
   return (
     <>
-    <div className="login-wrapper">
-      <div className="img-container">
-        <img src={LoginImg}/>
-      </div>
-      <div className="login-container">
-      <div className="login-form">
-        <h1>Instagram</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {/* <br />
+      <div className="login-wrapper">
+        <div className="img-container">
+          <img src={LoginImg} />
+        </div>
+        <div className="login-container">
+          <div className="login-form">
+            <h1>Instagram</h1>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {/* <br />
           <br /> */}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {/* <br />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {/* <br />
           <br /> */}
-          <button type="submit">Log in</button>
-          <p>
-            <a href="/forgot-password">Forgotten your Password?</a>
-          </p>
-        </form>
+              <button type="submit">Log in</button>
+              <p>
+                <a href="/forgot-password">Forgotten your Password?</a>
+              </p>
+            </form>
+          </div>
+          <div className="signup-container">
+            <p>
+              Don't have an account? <a href="/signup">Sign up</a>
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="signup-container">
-        <p>
-          Don't have an account? <a href="/signup">Sign up</a>
-        </p>
-      </div>
-      </div>
-    
-    </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

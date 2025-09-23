@@ -24,14 +24,17 @@ export default function Comments() {
     if (!newComment.trim()) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/posts/${postId}/comment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: newComment }),
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/v1/posts/${postId}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: newComment }),
+        }
+      );
       const data = await res.json();
       setComments((prev) => [...prev, data]);
       setNewComment("");

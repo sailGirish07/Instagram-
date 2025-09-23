@@ -8,8 +8,7 @@ const {
   followUser,
   unfollowUser,
   getFollowers,
-  getFollowing
-  
+  getFollowing,
 } = require("../controllers/userController");
 
 const auth = require("../middlewares/authMiddleware");
@@ -37,6 +36,5 @@ router.get("/:userId/followers", auth, getFollowers);
 
 // Get following
 router.get("/:userId/following", auth, getFollowing);
-
 
 module.exports = router;

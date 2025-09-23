@@ -5,20 +5,19 @@ const { default: mongoose } = require("mongoose");
 // Logged-in user profile
 exports.getProfile = async (req, res) => {
   try {
-    // const user = await User.findById(req.userId, "-password");
-    // if (!user) return res.status(404).json({ message: "User not found" });
-    // res.json(user);
     const userId = mongoose.Types.ObjectId(req.userId);
 
     const result = await User.aggregate([
-      {$match : {_id: userId}},
-      {$project : {
-        password : 0
-      }},
+      { $match: { _id: userId } },
+      {
+        $project: {
+          password: 0,
+        },
+      },
     ]);
 
-    if(!result || result.length === 0)
-      return res.status(400).json({message: "User not found"});
+    if (!result || result.length === 0)
+      return res.status(400).json({ message: "User not found" });
     res.json(result[0]);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -51,10 +50,9 @@ exports.updateProfile = async (req, res) => {
 // Logged-in user's posts
 exports.getUserPosts = async (req, res) => {
   try {
-    // const posts = await Post.find({ user: req.userId }).sort({ createdAt: -1 });
     const posts = await Post.aggregate([
-      {$match : {user : req.userId}},
-      {$sort: {createdAt: -1}},
+      { $match: { user: req.userId } },
+      { $sort: { createdAt: -1 } },
     ]);
     res.json(posts);
   } catch (err) {
@@ -67,57 +65,57 @@ exports.getUserById = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id);
     const result = await User.aggregate([
-      {$match : {_id : userId}},
-      {$project:{password : 0}},
+      { $match: { _id: userId } },
+      { $project: { password: 0 } },
       {
-        $lookup:{
-          from :"users",
-          localField : "followers",
-          foreignField : "_id",
-          as : "followers"
-        }
+        $lookup: {
+          from: "users",
+          localField: "followers",
+          foreignField: "_id",
+          as: "followers",
+        },
       },
       {
-        $project : {
+        $project: {
           followers: { userName: 1, profilePic: 1 },
           following: 1,
           fullName: 1,
           userName: 1,
           email: 1,
-          createdAt: 1
-        }
+          createdAt: 1,
+        },
       },
       {
-        $lookup : {
-          from : "users",
+        $lookup: {
+          from: "users",
           localField: "following",
           foreignField: "_id",
-          as:"following"
-        }
+          as: "following",
+        },
       },
       {
-        $project:{
+        $project: {
           followers: 1,
           following: { userName: 1, profilePic: 1 },
           fullName: 1,
           userName: 1,
           email: 1,
-          createdAt: 1
-        }
+          createdAt: 1,
+        },
       },
       {
-        $lookup : {
-          from : "posts",
-          let :{userId: "$_id"},
+        $lookup: {
+          from: "posts",
+          let: { userId: "$_id" },
           pipeline: [
             { $match: { $expr: { $eq: ["$user", "$$userId"] } } },
-            { $sort: { createdAt: -1 } } // newest posts first
+            { $sort: { createdAt: -1 } }, // newest posts first
           ],
-          as: "posts"
-        }
-      }
+          as: "posts",
+        },
+      },
     ]);
-     if (!result || result.length === 0)
+    if (!result || result.length === 0)
       return res.status(404).json({ message: "User not found" });
 
     res.json(result[0]);
@@ -134,35 +132,34 @@ exports.searchUsers = async (req, res) => {
 
     const users = await User.aggregate([
       {
-        $match : {
-          $or : [
-            { userName: { $regex: query, $options: "i" }},
-             { fullName: { $regex: query, $options: "i" }},
+        $match: {
+          $or: [
+            { userName: { $regex: query, $options: "i" } },
+            { fullName: { $regex: query, $options: "i" } },
           ],
-        },S
+        },
+        S,
       },
       {
-        $project : {
+        $project: {
           _id: 1,
-          userName : 1,
-          fullName : 1,
+          userName: 1,
+          fullName: 1,
           profilePic: 1,
-        }
-      }
+        },
+      },
     ]);
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: "Server error" });          
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Follow User
 exports.followUser = async (req, res) => {
   const session = await mongoose.startSession();
-
   try {
-    const loggedInUserId = req.userId; 
+    const loggedInUserId = req.userId;
     const userIdToFollow = req.params.userId;
 
     if (userIdToFollow === loggedInUserId) {

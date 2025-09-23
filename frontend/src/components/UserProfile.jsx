@@ -155,13 +155,6 @@ export default function UserProfile() {
             <p>
               <strong>{posts.length}</strong> posts
             </p>
-
-            {/* <p>
-              <strong>{user.followers?.length || 0}</strong> followers
-            </p>
-            <p>
-              <strong>{user.following?.length || 0}</strong> following
-            </p> */}
             {/* Clickable followers */}
             <p
               style={{ cursor: "pointer" }}
@@ -177,11 +170,9 @@ export default function UserProfile() {
             >
               <strong>{user.following?.length || 0}</strong> following
             </p>
-
           </div>
         </div>
       </div>
-
       <div className="posts-grid">
         {posts.length === 0 && <p>No posts yet</p>}
         {posts.map((post) => (

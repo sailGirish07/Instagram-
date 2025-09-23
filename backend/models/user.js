@@ -48,25 +48,25 @@ const userSchema = new mongoose.Schema({
   ],
   followers: [
     {
-    userId : {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      userName: String,
+      profilePic: String,
+      fullName: String,
     },
-    userName :String,
-    profilePic : String,
-    fullName : String,
-  },
   ],
   following: [
     {
-    userId : {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      userName: String,
+      profilePic: String,
+      fullName: String,
     },
-    userName :String,
-    profilePic : String,
-    fullName : String,
-  }
   ],
 });
 
