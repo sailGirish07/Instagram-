@@ -33,22 +33,51 @@ export default function Profile() {
         );
 
         //Normalize media for each post
-        const normalizedPosts = resPosts.data.map((post) => {
-          let mediaUrl = "";
-          let mediaType = "image";
+        // const normalizedPosts = resPosts.data.map((post) => {
+        //   let mediaUrl = "";
+        //   let mediaType = "image";
 
-          if (typeof post.media === "string") {
-            mediaUrl = post.media;
-            if (post.media.endsWith(".mp4")) mediaType = "video";
-          } else if (post.media && typeof post.media === "object") {
-            mediaUrl = post.media.url;
-            mediaType = post.media.type;
-          }
+        //   if (typeof post.media === "string") {
+        //     mediaUrl = post.media;
+        //     if (post.media.endsWith(".mp4")) mediaType = "video";
+        //   } else if (post.media && typeof post.media === "object") {
+        //     mediaUrl = post.media.url;
+        //     mediaType = post.media.type;
+        //   }
 
-          return { ...post, media: { url: mediaUrl, type: mediaType } };
-        });
+        //   return { ...post, media: { url: mediaUrl, type: mediaType } };
+        // });
 
-        setPosts(normalizedPosts);
+        // setPosts(normalizedPosts);
+        // Normalize media for each post
+const normalizedPosts = resPosts.data.map((post) => {
+  let mediaUrl = "";
+  let mediaType = "image";
+
+  // If media is stored as a string
+  if (typeof post.media === "string") {
+    mediaUrl = post.media;
+
+    // Check if it's a video
+    if (post.media.toLowerCase().endsWith(".mp4")) mediaType = "video";
+  } 
+  // If media is an object (future-proof if you store {url, type})
+  else if (post.media && typeof post.media === "object") {
+    mediaUrl = post.media.url;
+    mediaType = post.media.type || "image"; // default to image if type missing
+  }
+
+  return {
+    ...post,
+    media: {
+      url: mediaUrl,
+      type: mediaType,
+    },
+  };
+});
+
+setPosts(normalizedPosts);
+
       } catch (err) {
         console.error("Error fetching profile:", err);
         alert("Failed to fetch profile. Please login again.");
@@ -157,3 +186,4 @@ export default function Profile() {
     </div>
   );
 }
+
