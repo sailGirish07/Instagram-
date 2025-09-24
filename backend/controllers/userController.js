@@ -71,12 +71,41 @@ exports.getUserById = async (req, res) => {
 };
 
 // Search users
+// exports.searchUsers = async (req, res) => {
+//   try {
+//     const query = req.query.query;
+//     if (!query) return res.json([]);
+
+//     // Regular Mongoose find query with regex search
+//     const users = await User.find(
+//       {
+//         $or: [
+//           { userName: { $regex: query, $options: "i" } },
+//           { fullName: { $regex: query, $options: "i" } },
+//         ],
+//       },
+//       // Projection: only select these fields
+//       "_id userName fullName profilePic"
+//     );
+
+//     res.json(users);
+//   } catch (err) {
+//     console.error("Error searching users:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
 exports.searchUsers = async (req, res) => {
   try {
-    const query = req.query.query;
+    // Safely get and trim the query string
+    const query = req.query.query?.trim();
     if (!query) return res.json([]);
 
-    // Regular Mongoose find query with regex search
+    // Debug log to check what query comes in
+    console.log("Searching users with query:", query);
+
+    // Perform regex search (case-insensitive) on username or full name
     const users = await User.find(
       {
         $or: [
@@ -84,16 +113,24 @@ exports.searchUsers = async (req, res) => {
           { fullName: { $regex: query, $options: "i" } },
         ],
       },
-      // Projection: only select these fields
-      "_id userName fullName profilePic"
+      "_id userName fullName profilePic" // only select these fields
     );
+
+    // Debug log to see what users are returned
+    console.log("Found users:", users.length);
 
     res.json(users);
   } catch (err) {
+    // Log full error details
     console.error("Error searching users:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Server error during user search",
+      error: err.message,
+      stack: err.stack,
+    });
   }
 };
+
 
 // Follow User
 exports.followUser = async (req, res) => {

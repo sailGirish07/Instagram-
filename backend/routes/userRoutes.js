@@ -22,8 +22,9 @@ router.put("/profile", auth, upload.single("profilePic"), updateProfile);
 router.get("/profile-posts", auth, getUserPosts);
 
 // Public profile & search
-router.get("/user/:id", auth, getUserById);
 router.get("/search", auth, searchUsers);
+router.get("/:id", auth, getUserById);
+
 
 // Follow a user
 router.put("/:userId/follow", auth, followUser);

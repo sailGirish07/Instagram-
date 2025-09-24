@@ -1,0 +1,13 @@
+.share-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background: white;
+  padding: 3px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.share-icon:hover {
+  background: #f2f2f2;
+}

@@ -19,7 +19,7 @@ export default function UserProfile() {
     const fetchUser = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/v1/users/user/${id}`,
+          `http://localhost:8080/api/v1/users/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

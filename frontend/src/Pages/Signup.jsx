@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../public/styles/signup.css";
+import '../Shared Components/Footer'
+import Footer from "../Shared Components/Footer";
 
 export function Signup() {
   const navigate = useNavigate();
@@ -46,56 +48,109 @@ export function Signup() {
   };
 
   return (
-    <div>
-      <div>
-        <h1>Instagram</h1>
-        <p>Sign up to see photos and videos from your friends.</p>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        {/* <br />
-        <br /> */}
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
-        />
-        {/* <br />
-        <br /> */}
-        <input
-          type="text"
-          name="userName"
-          placeholder="UserName"
-          value={formData.userName}
-          onChange={handleChange}
-        />
-        {/* <br />
-        <br /> */}
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+    // <>
+    // <div>
+    //   <div>
+    //     <h1>Instagram</h1>
+    //     <p>Sign up to see photos and videos from your friends.</p>
+    //   </div>
+    //   <form onSubmit={handleSubmit}>
+    //     <input
+    //       type="email"
+    //       name="email"
+    //       placeholder="Email"
+    //       value={formData.email}
+    //       onChange={handleChange}
+    //       required
+    //     />
+    //     {/* <br />
+    //     <br /> */}
+    //     <input
+    //       type="text"
+    //       name="fullName"
+    //       placeholder="Full Name"
+    //       value={formData.fullName}
+    //       onChange={handleChange}
+    //     />
+    //     {/* <br />
+    //     <br /> */}
+    //     <input
+    //       type="text"
+    //       name="userName"
+    //       placeholder="UserName"
+    //       value={formData.userName}
+    //       onChange={handleChange}
+    //     />
+    //     {/* <br />
+    //     <br /> */}
+    //     <input
+    //       type="password"
+    //       name="password"
+    //       placeholder="Password"
+    //       value={formData.password}
+    //       onChange={handleChange}
+    //       required
+    //     />
 
-        <button type="submit">Sign up</button>
-      </form>
-      <div>
-        <p>
-          Have an account? <a href="/login">Log in</a>
-        </p>
+    //     <button type="submit">Sign up</button>
+    //   </form>
+    //   <div>
+    //     <p>
+    //       Have an account? <a href="/login">Log in</a>
+    //     </p>
+    //   </div>
+    // </div>
+    // <Footer/>
+    // </>
+     <div className="signup-page">
+      <div className="main-container">
+        <div className="signup-container">
+          <h1>Instagram</h1>
+          <p>Sign up to see photos and videos from your friends.</p>
+
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="userName"
+              placeholder="UserName"
+              value={formData.userName}
+              onChange={handleChange}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+
+            <button type="submit">Sign up</button>
+          </form>
+        </div>
+
+        <div className="login-redirect-container">
+          <p>
+            Have an account? <a href="/login">Log in</a>
+          </p>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

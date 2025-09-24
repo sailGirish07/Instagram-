@@ -33,22 +33,6 @@ exports.createPost = async (req, res) => {
 };
 
 // Get profile posts
-// exports.getProfilePosts = async (req, res) => {
-//   try {
-//     console.log("User ID from token:", req.userId); // <-- log the userId
-//     const posts = await Post.find({ user: mongoose.Types.ObjectId(req.userId) })
-//       .populate("user", "userName profilePic")
-//       .sort({ createdAt: -1 });
-//         console.log("Posts found:", posts.length); // <-- log number of posts
-//     res.json(posts);
-//   } catch (err) {
-//     console.error("Profile posts error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-// const mongoose = require("mongoose");
-// const Post = require("../models/post");
-
 exports.getProfilePosts = async (req, res) => {
   try {
     if (!req.userId) return res.status(401).json({ message: "Unauthorized" });
@@ -211,30 +195,168 @@ exports.toggleSavePost = async (req, res) => {
 };
 
 // Fetch all saved posts
-exports.getSavedPosts = async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).populate({
-      path: "savedPosts",
-      populate: { path: "user", select: "userName profilePic" },
-    });
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user.savedPosts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+// exports.getSavedPosts = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.userId).populate({
+//       path: "savedPosts",
+//       populate: { path: "user", select: "userName profilePic" },
+//     });
+//     if (!user) return res.status(404).json({ message: "User not found" });
+//     res.json(user.savedPosts);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-//Feed
-exports.getAllPosts = async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .populate("user", "userName profilePic")
-      .populate("comments.user", "userName profilePic")
-      .sort({ createdAt: -1 });
-    res.json(posts);
-  } catch (err) {
-    console.error("Get posts error:", err);
-    res.status(500).json({ message: "Server error" });
+exports.getSavedPosts = async(req,res) => {
+  try{
+    const userId = new mongoose.Types.ObjectId(req.userId);
+
+    const pipeline = [
+      {$match : {_id : userId}},
+      {
+        $lookup : {
+          from : "posts",
+          localField : "savedPosts",
+          foreignField: "_id",
+          as : "savedPostsData",
+        },
+      },
+      {$unwind :"$savedPostsData"},
+      {
+        $lookup : {
+          from : "users",
+          localField :"savedPostsData.user",
+          foreignField : "_id",
+          as : "SavedPostsUser",
+        },
+      },
+      {$unwind :{ path: "$savedPostsUser", preserveNullAndEmptyArrays: true }},
+      {
+        $project : {
+          _id : "$savedPostsData._id", 
+          caption : "$savedPostsData.caption",
+          media : "$savedPostsData.media",
+          createdAt :"$savedPostsData.createdAt",
+          user : {
+            _id : "$savedPostsUser._id",
+            userName : "$savedPostsUser.userName",
+            profilePic :"$savedPostsUser.profilePic",
+          },
+          likes : "$savedPostsData.likes",
+          comments : "$savedPostsData.comments",
+        },
+      },
+      {
+        $group : {
+          _id : null,
+          savedPosts : {$push : "$$ROOT"} 
+        }
+      }
+    ];
+
+      const result = await User.aggregate(pipeline);
+
+    if(!result.length || !Array.isArray(result[0].savedPosts) ){
+      return res.json([]);
+    }
+
+    res.json(result[0].savedPosts);
+  }catch(err){
+    console.error("Get saved posts error", err);
+    res.status(500).json({message: "Server Error"});
   }
-};
+}
+//Feed
+// exports.getAllPosts = async (req, res) => {
+//   try {
+//     const posts = await Post.find()
+//       .populate("user", "userName profilePic")
+//       .populate("comments.user", "userName profilePic")
+//       .sort({ createdAt: -1 });
+//     res.json(posts);
+//   } catch (err) {
+//     console.error("Get posts error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
+exports.getAllPosts = async(req, res) => {
+  try{
+    const pipeline = [
+      {$sort : {createdAt : -1}}  ,  
+      {
+        $lookup : {
+          from : "users",
+          localField: "user",
+          foreignField : "_id",
+          as:"user"
+        }
+      },
+      {$unwind: "$user"},
+      {$unwind : {path: "$comments", preserveNullAndEmptyArrays: true}},
+      {
+        $lookup: {
+          from :"users",
+          localField : "comments.user",
+          foreignField: "_id",
+          as : "comments.user"
+        }
+      },
+      {$unwind : {path: "$comments.user", preserveNullAndEmptyArrays : true}},
+      {
+        $group : {
+          _id: "$_id",
+          caption: { $first: "$caption" },
+          media: { $first: "$media" },
+          likes: { $first: "$likes" },
+          createdAt: { $first: "$createdAt" },
+          user: { 
+            $first: {
+              _id: "$user._id",
+              userName: "$user.userName",
+              profilePic: "$user.profilePic"
+            }
+          },
+          comments: { 
+            $push: {
+              $cond: {
+                if: "$comments.user", 
+                then: {
+                  _id: "$comments._id",
+                  text: "$comments.text",
+                  createdAt: "$comments.createdAt",
+                  user: {
+                    _id: "$comments.user._id",
+                    userName: "$comments.user.userName",
+                    profilePic: "$comments.user.profilePic"
+                  }
+                },
+                else: "$$REMOVE"
+              }
+            } 
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          caption: 1,
+          media: 1,
+          likes: 1,
+          comments: 1,
+          user: 1,
+          createdAt: 1,
+          updatedAt: 1, 
+        }
+      }
+    ];
+    const posts = await Post.aggregate(pipeline);
+    res.json(posts);
+  }catch(err){
+    console.log("Get posts error",err);
+    res.status(500).json({message : "Server Error"});
+  }
+}

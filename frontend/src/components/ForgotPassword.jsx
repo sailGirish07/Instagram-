@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Header";
+import "../Shared Components/Footer";
+import Footer from "../Shared Components/Footer";
+import '../public/styles/forgotPass.css'
 
 export function ForgotPassword() {
   const navigate = useNavigate();
@@ -50,44 +52,79 @@ export function ForgotPassword() {
   };
 
   return (
+    // <>
+      
+    //   <div>
+    //     <h1>Reset Password</h1>
+    //     <form onSubmit={handleSubmit}>
+    //       <input
+    //         type="email"
+    //         name="email"
+    //         placeholder="Email"
+    //         value={formData.email}
+    //         onChange={handleChange}
+    //         required
+    //       />
+    //       {/* <br />
+    //     <br /> */}
+    //       <input
+    //         type="password"
+    //         name="newPassword"
+    //         placeholder="New Password"
+    //         value={formData.newPassword}
+    //         onChange={handleChange}
+    //         required
+    //       />
+    //       {/* <br />
+    //     <br /> */}
+    //       <input
+    //         type="password"
+    //         name="confirmPassword"
+    //         placeholder="Confirm Password"
+    //         value={formData.confirmPassword}
+    //         onChange={handleChange}
+    //         required
+    //       />
+    //       {/* <br />
+    //     <br /> */}
+    //       <button type="submit">Reset Password</button>
+    //     </form>
+    //   </div>
+    //   <Footer/>
+    // </>
     <>
-      {/* <Header/> */}
-      <div>
-        <h1>Reset Password</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          {/* <br />
-        <br /> */}
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="New Password"
-            value={formData.newPassword}
-            onChange={handleChange}
-            required
-          />
-          {/* <br />
-        <br /> */}
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          {/* <br />
-        <br /> */}
-          <button type="submit">Reset Password</button>
-        </form>
-      </div>
-    </>
+  <div className="reset-container">
+    <h1 className="reset-title">Reset Password</h1>
+    <form className="reset-form" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="newPassword"
+        placeholder="New Password"
+        value={formData.newPassword}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="confirmPassword"
+        placeholder="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit">Reset Password</button>
+    </form>
+  </div>
+  <Footer />
+</>
+
   );
 }

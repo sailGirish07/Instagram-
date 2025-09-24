@@ -50,8 +50,7 @@ export default function Save() {
           <div
             key={post._id}
             className="save-item"
-            onClick={() => navigate(`/post/${post._id}`, { state: { post } })}
-          >
+            onClick={() => navigate(`/post/${post._id}`, { state: { post } })}>
             <img src={post.media} alt="saved post" />
           </div>
         ))}
